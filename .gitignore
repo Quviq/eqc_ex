@@ -1,0 +1,8 @@
+.DS_Store
+mix.lock
+_build
+doc
+deps
+erl_crash.dump
+*.ez
+.compile.*
