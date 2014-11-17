@@ -1,6 +1,12 @@
 
 defmodule Pulse do
 
+defmacro replaceModule(old, new) do
+  quote do
+    @compile {:pulse_replace_module, [{unquote(old), unquote(new)}]}
+  end
+end
+
 defmacro pulse(do: action, after: clauses) do
   res = Macro.var :res, __MODULE__
   quote do
