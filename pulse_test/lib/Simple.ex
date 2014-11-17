@@ -1,11 +1,12 @@
 
 import PulseInstrument
-import Pulse
+import Task
+require Pulse
 
 defmodule Simple do
 
 @compile {:parse_transform, :pulse_instrument}
-@compile {:pulse_skip, [{:hello_test, 0}]}
+Pulse.replaceModule Task, Pulse.Task
 
 def hello_server(root) do
   spawn fn -> server_loop(root) end
@@ -23,7 +24,9 @@ end
 def hello_test do
   server = hello_server self
   send server, {:msg, :hello}
-  Kernel.spawn fn -> send server, {:msg, :world} end
+  # Kernel.spawn fn -> send server, {:msg, :world} end
+  task = async fn -> send server, {:msg, :world} end
+  await task
   xs = for _ <- [:hello, :world] do
         receive do
           {:reply, x} -> x
@@ -34,7 +37,7 @@ def hello_test do
 end
 
 def prop_pulse do
-  pulse do
+  Pulse.pulse do
     hello_test()
   after res ->
     :eqc.equals(res, [:hello, :world])
