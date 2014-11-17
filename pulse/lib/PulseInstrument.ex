@@ -7,10 +7,13 @@ defmodule PulseInstrument do
 ##      (1) Instrument Elixir library (and use pulse_replace_module)
 ##      (2) Special treatment of functions
 ##
+##  Agent
 ##  Task.async/await      (1)
 ##  Task.Supervisor.*     (1)
 ##  Supervisor            (1)
 ##  GenServer/GenEvent    (1)
+##
+##  global (Erlang lib)
 
 
 ## PULSE instrumented module. Instruments if project config has :pulse == true.
