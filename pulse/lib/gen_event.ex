@@ -1,6 +1,6 @@
 defmodule Pulse.GenEvent do
   @compile {:parse_transform, :pulse_instrument}
-  @compile {:pulse_replace_module, [{:gen, :pulse_gen}]}
+  @compile {:pulse_replace_module, [{:gen, :pulse_gen}, {:proc_lib, :pulse_proc_lib}]}
   @moduledoc """
   A behaviour module for implementing event handling functionality.
 

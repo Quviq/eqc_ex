@@ -1,6 +1,6 @@
 defmodule Pulse.GenServer do
   @compile {:parse_transform, :pulse_instrument}
-  @compile {:pulse_replace_module, [{:gen, :pulse_gen}]}
+  @compile {:pulse_replace_module, [{:gen, :pulse_gen}, {:gen_server, :pulse_gen_server}]}
   @moduledoc """
   A behaviour module for implementing the server of a client-server relation.
 
@@ -320,11 +320,11 @@ defmodule Pulse.GenServer do
   defp do_start(link, module, args, options) do
     case Keyword.pop(options, :name) do
       {nil, opts} ->
-        :gen.start(:gen_server, link, module, args, opts)
+        :gen.start(:pulse_gen_server, link, module, args, opts)
       {atom, opts} when is_atom(atom) ->
-        :gen.start(:gen_server, link, {:local, atom}, module, args, opts)
+        :gen.start(:pulse_gen_server, link, {:local, atom}, module, args, opts)
       {other, opts} when is_tuple(other) ->
-        :gen.start(:gen_server, link, other, module, args, opts)
+        :gen.start(:pulse_gen_server, link, other, module, args, opts)
     end
   end
 
