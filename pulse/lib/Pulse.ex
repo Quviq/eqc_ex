@@ -1,7 +1,13 @@
 
 defmodule Pulse do
 
-defmacro replaceModule(old, new) do
+defmacro instrument do
+  quote do
+    @compile {:parse_transform, :pulse_instrument}
+  end
+end
+
+defmacro replaceModule(old, with: new) do
   quote do
     @compile {:pulse_replace_module, [{unquote(old), unquote(new)}]}
   end
