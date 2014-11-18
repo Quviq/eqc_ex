@@ -1,7 +1,7 @@
 defmodule PulseTestTest do
   use ExUnit.Case
 
-  test "is instrumented" do
-    assert true
+  test "is ok" do
+    assert :eqc.quickcheck(Simple.prop_ok)
   end
 end

@@ -90,6 +90,10 @@ def prop_list do
   end
 end
 
+def prop_ok do
+  forAll n <- nat, do: n != 58434
+end
+
 def prop_nat do
   forAll {n, m} <- {nat, suchThat(n <- nat, do: n <= 15)} do
   implies n > 20 do

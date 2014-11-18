@@ -66,7 +66,7 @@ defp is_spawn_fun(_),                                            do: nil
 defp add_consumed({:->, meta, [[pat], body]}) do
   loc = srcLoc(meta)
   hd(case pat do
-    {:when, meta1, [pat, guard]} ->
+    {:when, _meta1, [pat, guard]} ->
       quote do
         (x = unquote(pat)) when unquote(guard) ->
           :pulse.consumed x, unquote(loc)
@@ -82,7 +82,7 @@ defp add_consumed({:->, meta, [[pat], body]}) do
 end
 
 ## send
-defp instrument(env, {:send, meta, [pid, msg]}) do
+defp instrument(_env, {:send, meta, [pid, msg]}) do
   quote do
     :pulse.send unquote(pid), unquote(msg), unquote(srcLoc meta)
   end
@@ -138,7 +138,7 @@ end
 defp instrument(env, xs) when is_list(xs), do: (for x <- xs, do: instrument(env, x))
 defp instrument(env, {a, b}),              do: {instrument(env, a), instrument(env, b)}
 defp instrument(env, {fun, meta, args}),   do: {instrument(env, fun), meta, instrument(env, args)}
-defp instrument(env, code),                do: code
+defp instrument(_env, code),               do: code
 
 ## Spawn instrumentation
 defp instrument_spawn(env, fun, meta, args) do
