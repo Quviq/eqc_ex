@@ -1,21 +1,22 @@
 
 import Task
 import EQC
-require Pulse
 import :eqc_gen
+require EQC.Pulse, as: Pulse
 
 defmodule Simple do
 
 Pulse.instrument
 Pulse.replaceModule Task,      with: Pulse.Task
 Pulse.replaceModule GenServer, with: Pulse.GenServer
-Pulse.sideEffect Simple.hello_server/1
+Pulse.sideEffect    :io._/_
 
 def hello_server(root) do
   spawn fn -> server_loop(root) end
 end
 
 def server_loop(root) do
+  :io.format "In server loop\n"
   receive do
     {:msg, msg} ->
       send root, {:reply, msg}

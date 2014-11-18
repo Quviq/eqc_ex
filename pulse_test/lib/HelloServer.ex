@@ -1,5 +1,5 @@
 
-require Pulse
+require EQC.Pulse, as: Pulse
 
 defmodule HelloServer do
 

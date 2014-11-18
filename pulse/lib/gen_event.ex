@@ -1,4 +1,4 @@
-defmodule Pulse.GenEvent do
+defmodule EQC.Pulse.GenEvent do
   @compile {:parse_transform, :pulse_instrument}
   @compile {:pulse_replace_module, [{:gen, :pulse_gen}, {:proc_lib, :pulse_proc_lib}]}
   @moduledoc """
@@ -270,11 +270,11 @@ defmodule Pulse.GenEvent do
   defp do_start(mode, options) do
     case Keyword.get(options, :name) do
       nil ->
-        :gen.start(Pulse.GenEvent, mode, @no_callback, [], [])
+        :gen.start(EQC.Pulse.GenEvent, mode, @no_callback, [], [])
       atom when is_atom(atom) ->
-        :gen.start(Pulse.GenEvent, mode, {:local, atom}, @no_callback, [], [])
+        :gen.start(EQC.Pulse.GenEvent, mode, {:local, atom}, @no_callback, [], [])
       other when is_tuple(other) ->
-        :gen.start(Pulse.GenEvent, mode, other, @no_callback, [], [])
+        :gen.start(EQC.Pulse.GenEvent, mode, other, @no_callback, [], [])
     end
   end
 

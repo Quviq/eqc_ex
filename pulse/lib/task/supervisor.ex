@@ -1,7 +1,7 @@
-defmodule Pulse.Task.Supervisor do
+defmodule EQC.Pulse.Task.Supervisor do
   @compile {:parse_transform, :pulse_instrument}
   @compile {:pulse_replace_module, [{:supervisor, :pulse_supervisor}]}
-  alias Pulse.Supervisor, as: Supervisor
+  alias EQC.Pulse.Supervisor, as: Supervisor
   @moduledoc """
   A tasks supervisor.
 
@@ -44,7 +44,7 @@ defmodule Pulse.Task.Supervisor do
     import Supervisor.Spec
     {restart, opts}  = Keyword.pop(opts, :restart, :temporary)
     {shutdown, opts} = Keyword.pop(opts, :shutdown, 5000)
-    children = [worker(Pulse.Task.Supervised, [], restart: restart, shutdown: shutdown)]
+    children = [worker(EQC.Pulse.Task.Supervised, [], restart: restart, shutdown: shutdown)]
     Supervisor.start_link(children, [strategy: :simple_one_for_one] ++ opts)
   end
 

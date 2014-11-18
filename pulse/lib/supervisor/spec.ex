@@ -1,4 +1,4 @@
-defmodule Pulse.Supervisor.Spec do
+defmodule EQC.Pulse.Supervisor.Spec do
   @compile {:parse_transform, :pulse_instrument}
   @moduledoc """
   Convenience functions for defining a supervision specification.

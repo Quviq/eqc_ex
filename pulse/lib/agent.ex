@@ -1,7 +1,7 @@
-defmodule Pulse.Agent do
+defmodule EQC.Pulse.Agent do
   @compile {:parse_transform, :pulse_instrument}
 
-  alias Pulse.GenServer, as: GenServer
+  alias EQC.Pulse.GenServer, as: GenServer
 
   @moduledoc """
   Agents are a simple abstraction around state.
@@ -150,7 +150,7 @@ defmodule Pulse.Agent do
   """
   @spec start_link((() -> term), GenServer.options) :: on_start
   def start_link(fun, options \\ []) when is_function(fun, 0) do
-    GenServer.start_link(Pulse.Agent.Server, fun, options)
+    GenServer.start_link(EQC.Pulse.Agent.Server, fun, options)
   end
 
   @doc """
@@ -162,7 +162,7 @@ defmodule Pulse.Agent do
   """
   @spec start_link(module, atom, [any], GenServer.options) :: on_start
   def start_link(module, fun, args, options \\ []) do
-    GenServer.start_link(Pulse.Agent.Server, {module, fun, args}, options)
+    GenServer.start_link(EQC.Pulse.Agent.Server, {module, fun, args}, options)
   end
 
   @doc """
@@ -172,7 +172,7 @@ defmodule Pulse.Agent do
   """
   @spec start((() -> term), GenServer.options) :: on_start
   def start(fun, options \\ []) when is_function(fun, 0) do
-    GenServer.start(Pulse.Agent.Server, fun, options)
+    GenServer.start(EQC.Pulse.Agent.Server, fun, options)
   end
 
   @doc """
@@ -183,7 +183,7 @@ defmodule Pulse.Agent do
   """
   @spec start(module, atom, [any], GenServer.options) :: on_start
   def start(module, fun, args, options \\ []) do
-    GenServer.start(Pulse.Agent.Server, {module, fun, args}, options)
+    GenServer.start(EQC.Pulse.Agent.Server, {module, fun, args}, options)
   end
 
   @doc """

@@ -1,6 +1,6 @@
-defmodule Pulse.Task do
+defmodule EQC.Pulse.Task do
   @compile {:parse_transform, :pulse_instrument}
-  @compile {:pulse_replace_module, [{Task.Supervised, Pulse.Task.Supervised}, {:proc_lib, :pulse_proc_lib}]}
+  @compile {:pulse_replace_module, [{Task.Supervised, EQC.Pulse.Task.Supervised}, {:proc_lib, :pulse_proc_lib}]}
   @moduledoc """
   Conveniences for spawning and awaiting for tasks.
 
@@ -171,7 +171,7 @@ defmodule Pulse.Task do
   @spec async(module, atom, [term]) :: t
   def async(mod, fun, args) do
     mfa = {mod, fun, args}
-    pid = :proc_lib.spawn_link(Pulse.Task.Supervised, :async, [self, get_info(self), mfa])
+    pid = :proc_lib.spawn_link(EQC.Pulse.Task.Supervised, :async, [self, get_info(self), mfa])
     ref = Process.monitor(pid)
     send(pid, {self(), ref})
     %Task{pid: pid, ref: ref}

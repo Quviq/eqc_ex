@@ -1,5 +1,5 @@
 
-defmodule Pulse do
+defmodule EQC.Pulse do
 
 defmacro instrument do
   quote do

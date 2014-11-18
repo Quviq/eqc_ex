@@ -1,7 +1,7 @@
-defmodule Pulse.Supervisor do
+defmodule EQC.Pulse.Supervisor do
   @compile {:parse_transform, :pulse_instrument}
   @compile {:pulse_replace_module, [{:supervisor, :pulse_supervisor}]}
-  alias Pulse.GenServer, as: GenServer
+  alias EQC.Pulse.GenServer, as: GenServer
   @moduledoc """
   A behaviour module for implementing supervision functionality.
 

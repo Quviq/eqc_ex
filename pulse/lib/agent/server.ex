@@ -1,8 +1,8 @@
-defmodule Pulse.Agent.Server do
+defmodule EQC.Pulse.Agent.Server do
   @compile {:parse_transform, :pulse_instrument}
   @moduledoc false
 
-  use Pulse.GenServer
+  use EQC.Pulse.GenServer
 
   def init(fun) do
     {:ok, run(fun, [])}

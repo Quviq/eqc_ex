@@ -1,4 +1,4 @@
-defmodule Pulse.Task.Supervised do
+defmodule EQC.Pulse.Task.Supervised do
   @compile {:parse_transform, :pulse_instrument}
   @compile {:pulse_replace_module, [{:proc_lib, :pulse_proc_lib}]}
   @moduledoc false

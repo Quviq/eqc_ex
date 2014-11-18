@@ -1,4 +1,4 @@
-defmodule Pulse.GenServer do
+defmodule EQC.Pulse.GenServer do
   @compile {:parse_transform, :pulse_instrument}
   @compile {:pulse_replace_module, [{:gen, :pulse_gen}, {:gen_server, :pulse_gen_server}]}
   @moduledoc """
