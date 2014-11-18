@@ -1,12 +1,13 @@
 
-import PulseInstrument
 import Task
+import EQC
 require Pulse
+import :eqc_gen
 
 defmodule Simple do
 
 Pulse.instrument
-Pulse.replaceModule Task, with: Pulse.Task
+Pulse.replaceModule Task,      with: Pulse.Task
 Pulse.replaceModule GenServer, with: Pulse.GenServer
 
 def hello_server(root) do
@@ -42,7 +43,7 @@ end
 
 def gen_hello_server(root) do
   HelloServer.start_link
-  GenServer.call(HelloServer, {:set_root, self})
+  GenServer.call(HelloServer, {:set_root, root})
 end
 
 def gen_hello do
@@ -71,40 +72,29 @@ end
 
 def bla do
   task = Task.async(fn -> 42 end)
-  x = 1 + Task.await(task)
+  _x = 1 + Task.await(task)
   pid = Process.spawn(fn -> 40 end, [:link])
   link pid
   pid
 end
 
-# defmacro forall(x, g, do: prop) do
-#   quote do
-#     :eqc.forall(unquote(g), fn unquote(x) -> unquote(prop) end)
-#   end
-# end
-# defmacro forall(x, opts) do
-#   :io.format("x    = ~p\n", [x])
-#   :io.format("opts = ~p\n", [opts])
-# end
+def orderedList do
+  let xs <- list(nat) do
+    :lists.sort xs
+  end
+end
 
-# defmacro let(x, in: g, do: body) do
-#   quote do
-#     :eqc_gen.bind(unquote(g), fn unquote(x) -> unquote(body) end)
-#   end
-# end
+def prop_list do
+  forAll xs <- orderedList do
+    :lists.sum(xs) < 100
+  end
+end
 
-# defmacro suchthat(x, g, pred) do
-#   loc = {__CALLER__.file, __CALLER__.line}
-#   quote do
-#     :eqc_gen.suchthat(unquote(g), fn unquote(x) -> unquote(pred) end, unquote(loc))
-#   end
-# end
-
-# def prop_nat do
-#   forall {n, m}, {suchthat(n, :eqc_gen.nat(), n <= 150),
-#                   suchthat(n, :eqc_gen.nat(), n <= 15)} do
-#     n + m < 30
-#   end
-# end
+def prop_nat do
+  forAll {n, m} <- {nat, suchThat(n <- nat, do: n <= 15)} do
+  implies n > 20 do
+    whenFail IO.puts("n = #{n}, m = #{m}"), do: n + m < 30
+  end end
+end
 
 end

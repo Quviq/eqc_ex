@@ -4,6 +4,23 @@ defmodule PulseInstrument do
 ## TODO
 ##  - Instrumented/mocked version of global (Erlang lib)
 ##  - Test GenServer
+##  - More macros
+##      skip function
+##      side effects
+##  - EQC macros
+##    - Put in EQC module
+##      Should that be EQC.exs and be distributed as source? It should be fine
+##      as beam but need documentation.
+##  - Rename modules
+##    - EQC.Pulse.*
+##  - Distribution
+##    - Put instrumented stuff in pulse_otp-project
+##    - eqc.ex   in eqc-project
+##    - pulse.ex in pulse-project
+##    - Setup release to compile Elixir
+##  - Documentation
+##  - What's this __using__ stuff?
+##  - Component macros? Maybe later.
 
 
 ## PULSE instrumented module. Instruments if project config has :pulse == true.
