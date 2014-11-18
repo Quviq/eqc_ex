@@ -10,6 +10,7 @@ Pulse.instrument
 Pulse.replaceModule Task,      with: Pulse.Task
 Pulse.replaceModule GenServer, with: Pulse.GenServer
 Pulse.sideEffect    :io._/_
+Pulse.skipFunction  pulse_test/0
 
 def hello_server(root) do
   spawn fn -> server_loop(root) end
@@ -67,6 +68,7 @@ def prop_pulse do
 end
 
 def pulse_test do
+  :io.format "Testing with PULSE\n"
   :pulse.start
   :pulse.verbose [:all]
   :eqc.quickcheck prop_pulse

@@ -8,9 +8,7 @@ defmacro instrument do
 end
 
 defmacro replaceModule(old, with: new) do
-  quote do
-    @compile {:pulse_replace_module, [{unquote(old), unquote(new)}]}
-  end
+  quote(do: @compile {:pulse_replace_module, [{unquote(old), unquote(new)}]})
 end
 
 defp skip_funs({f, a}) when is_atom(f) and is_integer(a), do: [{f, a}]
