@@ -9,6 +9,7 @@ defmodule Simple do
 Pulse.instrument
 Pulse.replaceModule Task,      with: Pulse.Task
 Pulse.replaceModule GenServer, with: Pulse.GenServer
+Pulse.sideEffect Simple.hello_server/1
 
 def hello_server(root) do
   spawn fn -> server_loop(root) end
@@ -31,7 +32,7 @@ def recv(n) do
 end
 
 def hello_test do
-  server = hello_server self
+  server = Simple.hello_server self
   send server, {:msg, :hello}
   # Kernel.spawn fn -> send server, {:msg, :world} end
   task = async fn -> send server, {:msg, :world} end
@@ -56,9 +57,9 @@ def gen_hello do
 end
 
 def prop_pulse do
-  Pulse.pulse do
-    # hello_test
-    gen_hello
+  Pulse.withPulse do
+    hello_test
+    # gen_hello
   after res ->
     :eqc.equals(res, [:hello, :world])
   end
