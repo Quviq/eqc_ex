@@ -10,7 +10,7 @@ Pulse.instrument
 Pulse.replaceModule Task,      with: Pulse.Task
 Pulse.replaceModule GenServer, with: Pulse.GenServer
 Pulse.sideEffect    :io._/_
-Pulse.skipFunction  pulse_test/0
+Pulse.skipFunction  [pulse_test/0, prop_ok/0]
 
 def hello_server(root) do
   spawn fn -> server_loop(root) end
@@ -67,6 +67,14 @@ def prop_pulse do
   end
 end
 
+def prop_pulse2 do
+  forAll seed <- :pulse.seed do
+    case :pulse.run_with_seed(fn -> gen_hello end, seed) do
+      res -> :eqc.equals(res, [:hello, :world])
+    end
+  end
+end
+
 def pulse_test do
   :io.format "Testing with PULSE\n"
   :pulse.start
@@ -94,8 +102,18 @@ def prop_list do
   end
 end
 
+def begin(do: stuff), do: stuff
+
 def prop_ok do
-  forAll n <- nat, do: n != 58434
+  setupTearDown(begin do
+    ref = :erlang.make_ref
+    :io.format "setup: ref = ~p\n", [ref]
+    ref
+  end) do
+    forAll n <- nat, do: n != 58434
+  after
+    ref -> :io.format "teardown: ref = ~p\n", [ref]
+  end
 end
 
 def prop_nat do

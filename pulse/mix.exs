@@ -25,6 +25,6 @@ defmodule Pulse.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [{:ex_doc, github: "elixir-lang/ex_doc", only: :dev}]
   end
 end

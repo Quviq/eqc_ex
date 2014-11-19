@@ -11,14 +11,10 @@ TODO
   - pulse.ex in pulse-project
   - Setup release to compile Elixir
 
-- Documentation
+  - Possibly it might be nicer to set this up as a mix project and distribute
+    it separately.
 
 - What's this __using__ stuff?
-
-- quote bind_quoted: [...] do ... end
-  Saves unquoting stuff?
-
-- register_attribute?
 
 - Instrumented/mocked version of global (Erlang lib)
 

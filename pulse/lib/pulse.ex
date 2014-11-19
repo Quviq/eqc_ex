@@ -1,26 +1,68 @@
 
 defmodule EQC.Pulse do
 
+@moduledoc """
+This module defines macros for using Quviq PULSE with Elixir. For more
+information about the compiler options, see the QuickCheck documentation.
+"""
+
+@doc """
+Instrument the current file with PULSE.
+
+Equivalent to
+
+    @compile {:parse_transform, :pulse_instrument}
+"""
 defmacro instrument do
   quote do
     @compile {:parse_transform, :pulse_instrument}
   end
 end
 
-defmacro replaceModule(old, with: new) do
+@doc """
+  Replace a module when instrumenting.
+
+  Usage:
+
+    replaceModule old, with: new
+
+  This will replace calls `old.f(args)` by `new.f(args)`. Note: it will not
+  replace instances of `old` used as an atom. For instance `spawn old, :f,
+  args` will not be changed.
+
+  Equivalent to
+
+    @compile {:pulse_replace_module, [{old, new}]}
+"""
+defmacro replaceModule(old, with: new) when new != nil do
   quote(do: @compile {:pulse_replace_module, [{unquote(old), unquote(new)}]})
+end
+defmacro replaceModule(old, opts) do
+  _ = {old, opts}
+  raise ArgumentError, "Usage: replaceModule NEW, with: OLD"
 end
 
 defp skip_funs({f, a}) when is_atom(f) and is_integer(a), do: [{f, a}]
 defp skip_funs({{f, _, nil}, a}) when is_atom(f) and is_integer(a), do: [{f, a}]
 defp skip_funs({:/, _, [f, a]}), do: skip_funs({f, a})
 defp skip_funs(xs) when is_list(xs), do: :lists.flatmap(&skip_funs/1, xs)
-defp skip_funs(other) do
-  raise ArgumentError, "Expected list of FUN/ARITY or {FUN, ARITY}."
+defp skip_funs(_) do
+  raise ArgumentError, "Expected list of FUN/ARITY."
 end
 
-defmacro skipFunction(skip) do
-  quote(do: @compile {:pulse_skip, unquote(skip_funs(skip))})
+@doc """
+  Skip instrumentation of the given functions.
+
+  Example:
+
+    skipFunctions [f/2, g/0]
+
+  Equivalent to
+
+    @compile {:pulse_skip, [{:f, 2}, {:g, 0}]}
+"""
+defmacro skipFunction(funs) do
+  quote(do: @compile {:pulse_skip, unquote(skip_funs(funs))})
 end
 
 defp mk_blank({:_, _, _}), do: :_
@@ -29,19 +71,61 @@ defp mk_blank(x),          do: x
 defp side_effects(es) when is_list(es), do: :lists.flatmap(&side_effects/1, es)
 defp side_effects({:/, _, [{{:., _, [m, f]}, _, []}, a]}), do: side_effects({m, f, a})
 defp side_effects({m, f, a}), do: [{:{}, [], [m, mk_blank(f), mk_blank(a)]}]
-defp side_effects(other) do
-  raise ArgumentError, "Expected list of {MOD, FUN, ARITY} or MOD.FUN/ARITY."
+defp side_effects(_) do
+  raise ArgumentError, "Expected list of MOD.FUN/ARITY."
 end
 
+@doc """
+  Declare side effects.
+
+  Example:
+
+    sideEffect [Mod.fun/2, :ets._/_]
+
+  Equivalent to
+
+    @compile {:pulse_side_effect, [{Mod, :fun, 2}, {:ets, :_, :_}]}
+"""
 defmacro sideEffect(es) do
   quote(do: @compile {:pulse_side_effect, unquote(side_effects(es))})
 end
 
+@doc """
+  Declare functions to not be effectful.
+
+  Useful to override `sideEffect/1`. For instance,
+
+    sideEffect   :ets._/_
+    noSideEffect :ets.is_compiled_ms/1
+
+  The latter line is quivalent to
+
+    @compile {:pulse_no_side_effect, [{:ets, :is_compiled_ms, 1}]}
+"""
 defmacro noSideEffect(es) do
   quote(do: @compile {:pulse_no_side_effect, unquote(side_effects(es))})
 end
 
-defmacro withPulse(do: action, after: clauses) do
+@doc """
+  Define a QuickCheck property that uses PULSE.
+
+  Usage:
+
+    withPulse do
+      action
+    after res ->
+      prop
+    end
+
+  Equivalent to
+
+    forAll seed <- :pulse.seed do
+      case :pulse.run_with_seed(fn -> action end, seed) do
+        res -> prop
+      end
+    end
+"""
+defmacro withPulse(do: action, after: clauses) when action != nil and clauses != nil do
   res = Macro.var :res, __MODULE__
   quote do
     :eqc.forall(:pulse.seed(),
@@ -51,7 +135,8 @@ defmacro withPulse(do: action, after: clauses) do
       end)
   end
 end
-defmacro withPulse(_) do
+defmacro withPulse(opts) do
+  _ = opts
   raise(ArgumentError, "Syntax: withPulse do: ACTION, after: (RES -> PROP)")
 end
 
