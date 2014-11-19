@@ -2,8 +2,8 @@ defmodule Pulse.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :elixir_pulse,
-     version: "0.0.1",
+    [app: :elixir_eqc,
+     version: "1.32.0",
      elixir: "~> 1.0",
      deps: deps]
   end
