@@ -2,11 +2,13 @@
 import Task
 import EQC
 import :eqc_gen
+
 require EQC.Pulse, as: Pulse
 
 defmodule Simple do
 
-Pulse.instrument
+use Pulse
+
 Pulse.replaceModule Task,      with: Pulse.Task
 Pulse.replaceModule GenServer, with: Pulse.GenServer
 Pulse.sideEffect    :io._/_

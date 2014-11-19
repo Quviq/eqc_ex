@@ -12,9 +12,7 @@ TODO
   - Setup release to compile Elixir
 
   - Possibly it might be nicer to set this up as a mix project and distribute
-    it separately.
-
-- What's this __using__ stuff?
+    it separately. Uploading it to whereever Elixir packages lived (hex.pm).
 
 - Instrumented/mocked version of global (Erlang lib)
 

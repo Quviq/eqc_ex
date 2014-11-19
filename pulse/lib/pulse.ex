@@ -6,6 +6,10 @@ This module defines macros for using Quviq PULSE with Elixir. For more
 information about the compiler options, see the QuickCheck documentation.
 """
 
+defmacro __using__([]) do
+  quote(do: EQC.Pulse.instrument)
+end
+
 @doc """
 Instrument the current file with PULSE.
 
