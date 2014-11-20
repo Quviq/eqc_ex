@@ -1,4 +1,4 @@
-defmodule Pulse.Mixfile do
+defmodule EQC.Mixfile do
   use Mix.Project
 
   def project do
