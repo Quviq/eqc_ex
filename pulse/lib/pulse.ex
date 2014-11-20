@@ -1,9 +1,13 @@
 
 defmodule EQC.Pulse do
 
+@copyright "Quviq AB, 2014"
+
 @moduledoc """
-This module defines macros for using Quviq PULSE with Elixir. For more
-information about the compiler options, see the QuickCheck documentation.
+  This module defines macros for using Quviq PULSE with Elixir. For more
+  information about the compiler options see the QuickCheck documentation.
+
+  `Copyright (C) Quviq AB, 2014.`
 """
 
 defmacro __using__([]) do

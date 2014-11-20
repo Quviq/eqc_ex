@@ -2,17 +2,24 @@ defmodule Pulse.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :eqc_ex,
-     version: "1.32.0",
-     elixir: "~> 1.0",
-     deps: deps]
+    [ app: :eqc_ex,
+      version: "1.32.2",
+      elixir: "~> 1.0",
+      deps: deps,
+      package: [ contributors: ["Quviq AB"],
+                 licenses: ["BSD"],
+                 files: ["lib", "docs", "mix.exs", "LICENSE", "README.md"],
+                 links: %{"quviq.com" => "http://www.quviq.com"}
+               ],
+      description: "Wrappers to facilitate using Quviq QuickCheck with Elixir."
+    ]
   end
 
   # Configuration for the OTP application
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger]]
+    [] 
   end
 
   # Dependencies can be Hex packages:
