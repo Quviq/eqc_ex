@@ -8,7 +8,7 @@ defmodule EQC.Mixfile do
       deps: deps,
       package: [ contributors: ["Quviq AB"],
                  licenses: ["BSD"],
-                 files: ["lib", "docs", "mix.exs", "LICENSE", "README.md"],
+                 files: ["lib", "mix.exs", "LICENSE", "README.md"],
                  links: %{"quviq.com" => "http://www.quviq.com"}
                ],
       description: "Wrappers to facilitate using Quviq QuickCheck with Elixir."
