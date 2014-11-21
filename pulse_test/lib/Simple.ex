@@ -77,11 +77,11 @@ def prop_pulse2 do
   end
 end
 
-def pulse_test do
+def pulse_test(prop \\ prop_pulse) do
   :io.format "Testing with PULSE\n"
   :pulse.start
   :pulse.verbose [:all]
-  :eqc.quickcheck prop_pulse
+  :eqc.quickcheck prop
 end
 
 def bla do
