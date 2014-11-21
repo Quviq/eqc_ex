@@ -7,7 +7,7 @@ defmodule EQC.Pulse.Mixfile do
       elixir: "~> 1.0",
       deps: deps,
       package: [ contributors: ["Quviq AB"],
-                 licenses: ["BSD"],
+                 licenses: ["Apache 2.0"],
                  files: ["lib", "mix.exs", "LICENSE", "README.md"],
                  links: %{"quviq.com" => "http://www.quviq.com"}
                ],

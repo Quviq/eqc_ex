@@ -7,6 +7,9 @@ defmodule EQC.Pulse do
   This module defines macros for using Quviq PULSE with Elixir. For more
   information about the compiler options see the QuickCheck documentation.
 
+  See also the [`pulse_libs`](http://hex.pm/packages/pulse_libs) package for
+  instrumented versions of some of the Elixir standard libraries.
+
   `Copyright (C) Quviq AB, 2014.`
 """
 
