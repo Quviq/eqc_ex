@@ -26,6 +26,7 @@ defmodule PulseTest.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:eqc_ex, path: "../pulse"}]
+    [{:eqc_ex, path: "../pulse"},
+     {:pulse_libs, path: "../pulse_libs"}]
   end
 end
