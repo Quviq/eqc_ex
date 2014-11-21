@@ -4,10 +4,10 @@ defmodule EQC do
 @copyright "Quviq AB, 2014"
 
 @moduledoc """
-  This module contains macros to be used with Quviq QuickCheck. It defines
-  Elixir versions of the Erlang macros found in `eqc/include/eqc.hrl`. For
-  detailed documentation of the macros, please refer to the QuickCheck
-  documentation.
+  This module contains macros to be used with [Quviq
+  QuickCheck](http://www.quviq.com). It defines Elixir versions of the Erlang
+  macros found in `eqc/include/eqc.hrl`. For detailed documentation of the
+  macros, please refer to the QuickCheck documentation.
 
   `Copyright (C) Quviq AB, 2014.`
 """
