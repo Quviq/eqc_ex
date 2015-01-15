@@ -3,7 +3,7 @@ defmodule EQC.Mixfile do
 
   def project do
     [ app: :eqc_ex,
-      version: "1.0.0",
+      version: "1.1.0",
       elixir: "~> 1.0",
       deps: deps,
       package: [ contributors: ["Quviq AB"],
@@ -11,6 +11,7 @@ defmodule EQC.Mixfile do
                  files: ["lib", "mix.exs", "LICENSE", "README.md"],
                  links: %{"quviq.com" => "http://www.quviq.com"}
                ],
+      docs: [readme: "README.md", main: "EQC"],
       description: "Wrappers to facilitate using Quviq QuickCheck with Elixir."
     ]
   end

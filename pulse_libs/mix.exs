@@ -11,6 +11,7 @@ defmodule EQC.Pulse.Mixfile do
                  files: ["lib", "mix.exs", "LICENSE", "README.md"],
                  links: %{"quviq.com" => "http://www.quviq.com"}
                ],
+      docs: [readme: "README.md", main: "README"],
       description: "Elixir standard libraries instrumented with PULSE."
     ]
   end
@@ -32,6 +33,6 @@ defmodule EQC.Pulse.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    []
+    [{:ex_doc, github: "elixir-lang/ex_doc", only: :dev}]
   end
 end
