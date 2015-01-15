@@ -33,10 +33,10 @@ The variables of `pat` are bound in `prop`.
 
 In Erlang: `?FORALL(Pat, Gen, Prop)`.
 """
-defmacro forAll({:<-, _, [x, g]}, do: prop) when prop != nil, do: eqc_forall(x, g, prop)
-defmacro forAll(bind, prop) do
+defmacro forall({:<-, _, [x, g]}, do: prop) when prop != nil, do: eqc_forall(x, g, prop)
+defmacro forall(bind, prop) do
   _ = {bind, prop}
-  syntaxError "forAll PAT <- GEN, do: PROP"
+  syntax_error "forall PAT <- GEN, do: PROP"
 end
 
 @doc """
@@ -55,7 +55,7 @@ In Erlang: `?LET(Pat, Gen1, Gen2)`.
 defmacro let({:<-, _, [x, g]}, do: body) when body != nil, do: eqc_bind(x, g, body)
 defmacro let(bind, gen) do
   _ = {bind, gen}
-  syntaxError "let PAT <- GEN, do: GEN"
+  syntax_error "let PAT <- GEN, do: GEN"
 end
 
 @doc """
@@ -64,21 +64,21 @@ Generate a value that satisfies a given predicate.
 Throws an exception if no value is found after 100 attempts.
 Usage:
 
-    suchThat pat <- gen, do: pred
+    such_that pat <- gen, do: pred
 
 The variables of `pat` are bound in `pred`.
 
 In Erlang: `?SUCHTHAT(Pat, Gen, Pred)`.
 """
-defmacro suchThat({:<-, _, [x, g]}, do: pred) when pred != nil do
+defmacro such_that({:<-, _, [x, g]}, do: pred) when pred != nil do
   loc = {__CALLER__.file, __CALLER__.line}
   quote do
     :eqc_gen.suchthat(unquote(g), fn unquote(x) -> unquote(pred) end, unquote(loc))
   end
 end
-defmacro suchThat(bind, pred) do
+defmacro such_that(bind, pred) do
   _ = {bind, pred}
-  syntaxError "suchThat PAT <- GEN, do: PRED"
+  syntax_error "such_that PAT <- GEN, do: PRED"
 end
 
 @doc """
@@ -86,20 +86,20 @@ Generate a value that satisfies a given predicate, or `false` if no value is fou
 
 Usage:
 
-    suchThatMaybe pat <- gen, do: pred
+    such_that_maybe pat <- gen, do: pred
 
 The variables of `pat` are bound in `pred`.
 
 In Erlang: `?SUCHTHATMAYBE(Pat, Gen, Pred)`.
 """
-defmacro suchThatMaybe({:<-, _, [x, g]}, do: pred) when pred != nil do
+defmacro such_that_maybe({:<-, _, [x, g]}, do: pred) when pred != nil do
   quote do
     :eqc_gen.suchthatmaybe(unquote(g), fn unquote(x) -> unquote(pred) end)
   end
 end
-defmacro suchThatMaybe(bind, pred) do
+defmacro such_that_maybe(bind, pred) do
   _ = {bind, pred}
-  syntaxError "suchThatMaybe PAT <- GEN, do: PRED"
+  syntax_error "such_that_maybe PAT <- GEN, do: PRED"
 end
 
 @doc """
@@ -118,7 +118,7 @@ defmacro sized(n, do: prop) when prop != nil do
 end
 defmacro sized(_, prop) do
   _ = prop
-  syntaxError "sized N, do: PROP"
+  syntax_error "sized N, do: PROP"
 end
 
 @doc """
@@ -142,7 +142,7 @@ Like `let/2` but adds shrinking behaviour.
 
 Usage:
 
-    letShrink pat <- gen1 do
+    let_shrink pat <- gen1 do
       gen2
     end
 
@@ -151,12 +151,12 @@ possible shrinking of the result.
 
 In Erlang: `?LETSHRINK(Pat, Gen1, Gen2)`.
 """
-defmacro letShrink({:<-, _, [es, gs]}, do: g) when g != nil do
+defmacro let_shrink({:<-, _, [es, gs]}, do: g) when g != nil do
   quote(do: :eqc_gen.letshrink(unquote(gs), fn unquote(es) -> unquote(g) end))
 end
-defmacro letShrink(bind, gen) do
+defmacro let_shrink(bind, gen) do
   _ = {bind, gen}
-  syntaxError "letShrink PAT <- GEN, do: GEN"
+  syntax_error "let_shrink PAT <- GEN, do: GEN"
 end
 
 @doc """
@@ -164,7 +164,7 @@ Perform an action when a test fails.
 
 Usage:
 
-    whenFail(action) do
+    when_fail(action) do
       prop
     end
 
@@ -172,7 +172,7 @@ Typically the action will be printing some diagnostic information.
 
 In Erlang: `?WHENFAIL(Action, Prop)`.
 """
-defmacro whenFail(action, do: prop) when prop != nil do
+defmacro when_fail(action, do: prop) when prop != nil do
   quote do
     :eqc.whenfail(fn eqcResult ->
         :erlang.put :eqc_result, eqcResult
@@ -180,9 +180,9 @@ defmacro whenFail(action, do: prop) when prop != nil do
       end, EQC.lazy(do: unquote(prop)))
   end
 end
-defmacro whenFail(_, prop) do
+defmacro when_fail(_, prop) do
   _ = prop
-  syntaxError "whenFail ACTION, do: PROP"
+  syntax_error "when_fail ACTION, do: PROP"
 end
 
 @doc """
@@ -202,7 +202,7 @@ defmacro lazy(do: g) when g != nil do
 end
 defmacro lazy(gen) do
   _ = gen
-  syntaxError "lazy do: GEN"
+  syntax_error "lazy do: GEN"
 end
 
 @doc """
@@ -223,7 +223,7 @@ defmacro implies(pre, do: prop) when prop != nil do
 end
 defmacro implies(pre, prop) do
   _ = {pre, prop}
-  syntaxError "implies COND, do: PROP"
+  syntax_error "implies COND, do: PROP"
 end
 
 @doc """
@@ -231,7 +231,7 @@ Run a property in a separate process and trap exits.
 
 Usage:
 
-    trapExit do
+    trap_exit do
       prop
     end
 
@@ -239,10 +239,10 @@ Prevents a property from crashing if a linked process exits.
 
 In Erlang: `?TRAPEXIT(Prop)`.
 """
-defmacro trapExit(do: prop) when prop != nil, do: quote(do: :eqc.trapexit(fn -> unquote(prop) end))
-defmacro trapExit(prop) do
+defmacro trap_exit(do: prop) when prop != nil, do: quote(do: :eqc.trapexit(fn -> unquote(prop) end))
+defmacro trap_exit(prop) do
   _ = prop
-  syntaxError "trapExit do: PROP"
+  syntax_error "trap_exit do: PROP"
 end
 
 @doc """
@@ -263,7 +263,7 @@ defmacro timeout(limit, do: prop) when prop != nil do
 end
 defmacro timeout(_, prop) do
   _ = prop
-  syntaxError "timeout TIME, do: PROP"
+  syntax_error "timeout TIME, do: PROP"
 end
 
 @doc """
@@ -284,7 +284,7 @@ defmacro always(n, do: prop) when prop != nil do
 end
 defmacro always(_, prop) do
   _ = prop
-  syntaxError "always N, do: PROP"
+  syntax_error "always N, do: PROP"
 end
 
 @doc """
@@ -305,7 +305,7 @@ defmacro sometimes(n, do: prop) when prop != nil do
 end
 defmacro sometimes(_, prop) do
   _ = prop
-  syntaxError "sometimes N, do: PROP"
+  syntax_error "sometimes N, do: PROP"
 end
 
 @doc """
@@ -313,7 +313,7 @@ Setup and tear-down for a test run.
 
 Usage:
 
-    setupTearDown(setup) do
+    setup_teardown(setup) do
       prop
     after
       x -> teardown
@@ -324,9 +324,9 @@ the test run. The result of `setup` is bound to `x` in `teardown`, allowing
 passing resources allocated in `setup` to `teardown`. The `after` argument is
 optional.
 
-In Erlang: `?SETUP(fun() -> X = Setup, fun() -> TearDown end, Prop)`.
+In Erlang: `?SETUP(fun() -> X = Setup, fun() -> Teardown end, Prop)`.
 """
-defmacro setupTearDown(setup, do: prop, after: teardown) when prop != nil do
+defmacro setup_teardown(setup, do: prop, after: teardown) when prop != nil do
   x = Macro.var :x, __MODULE__
   td = cond do
     !teardown -> :ok
@@ -340,9 +340,9 @@ defmacro setupTearDown(setup, do: prop, after: teardown) when prop != nil do
       EQC.lazy(do: unquote(prop))}
   end
 end
-defmacro setupTearDown(_, opts) do
+defmacro setup_teardown(_, opts) do
   _ = opts
-  syntaxError "setup SETUP, do: PROP, after: (X -> TEARDOWN)"
+  syntax_error "setup_teardown SETUP, do: PROP, after: (X -> TEARDOWN)"
 end
 
 @doc """
@@ -350,7 +350,7 @@ A property that is only executed once for each test case.
 
 Usage:
 
-    onceOnly do
+    once_only do
       prop
     end
 
@@ -359,14 +359,14 @@ output. Useful if running tests is very expensive.
 
 In Erlang: `?ONCEONLY(Prop)`.
 """
-defmacro onceOnly(do: prop) when prop != nil do
+defmacro once_only(do: prop) when prop != nil do
   quote(do: :eqc.onceonly(fn -> unquote(prop) end))
 end
-defmacro onceOnly(prop) do
+defmacro once_only(prop) do
   _ = prop
-  syntaxError "onceOnly do: PROP"
+  syntax_error "once_only do: PROP"
 end
 
-defp syntaxError(err), do: raise(ArgumentError, "Usage: " <> err)
+defp syntax_error(err), do: raise(ArgumentError, "Usage: " <> err)
 
 end

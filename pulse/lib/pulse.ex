@@ -35,7 +35,7 @@ end
 
   Usage:
 
-    replaceModule old, with: new
+    replace_module old, with: new
 
   This will replace calls `old.f(args)` by `new.f(args)`. Note: it will not
   replace instances of `old` used as an atom. For instance `spawn old, :f,
@@ -45,12 +45,12 @@ end
 
     @compile {:pulse_replace_module, [{old, new}]}
 """
-defmacro replaceModule(old, with: new) when new != nil do
+defmacro replace_module(old, with: new) when new != nil do
   quote(do: @compile {:pulse_replace_module, [{unquote(old), unquote(new)}]})
 end
-defmacro replaceModule(old, opts) do
+defmacro replace_module(old, opts) do
   _ = {old, opts}
-  raise ArgumentError, "Usage: replaceModule NEW, with: OLD"
+  raise ArgumentError, "Usage: replace_module NEW, with: OLD"
 end
 
 defp skip_funs({f, a}) when is_atom(f) and is_integer(a), do: [{f, a}]
@@ -66,13 +66,13 @@ end
 
   Example:
 
-    skipFunctions [f/2, g/0]
+    skip_function [f/2, g/0]
 
   Equivalent to
 
     @compile {:pulse_skip, [{:f, 2}, {:g, 0}]}
 """
-defmacro skipFunction(funs) do
+defmacro skip_function(funs) do
   quote(do: @compile {:pulse_skip, unquote(skip_funs(funs))})
 end
 
@@ -91,29 +91,29 @@ end
 
   Example:
 
-    sideEffect [Mod.fun/2, :ets._/_]
+    side_effect [Mod.fun/2, :ets._/_]
 
   Equivalent to
 
     @compile {:pulse_side_effect, [{Mod, :fun, 2}, {:ets, :_, :_}]}
 """
-defmacro sideEffect(es) do
+defmacro side_effect(es) do
   quote(do: @compile {:pulse_side_effect, unquote(side_effects(es))})
 end
 
 @doc """
   Declare functions to not be effectful.
 
-  Useful to override `sideEffect/1`. For instance,
+  Useful to override `side_effect/1`. For instance,
 
-    sideEffect   :ets._/_
-    noSideEffect :ets.is_compiled_ms/1
+    side_effect    :ets._/_
+    no_side_effect :ets.is_compiled_ms/1
 
   The latter line is quivalent to
 
     @compile {:pulse_no_side_effect, [{:ets, :is_compiled_ms, 1}]}
 """
-defmacro noSideEffect(es) do
+defmacro no_side_effect(es) do
   quote(do: @compile {:pulse_no_side_effect, unquote(side_effects(es))})
 end
 
@@ -122,7 +122,7 @@ end
 
   Usage:
 
-    withPulse do
+    with_pulse do
       action
     after res ->
       prop
@@ -130,13 +130,13 @@ end
 
   Equivalent to
 
-    forAll seed <- :pulse.seed do
+    forall seed <- :pulse.seed do
       case :pulse.run_with_seed(fn -> action end, seed) do
         res -> prop
       end
     end
 """
-defmacro withPulse(do: action, after: clauses) when action != nil and clauses != nil do
+defmacro with_pulse(do: action, after: clauses) when action != nil and clauses != nil do
   res = Macro.var :res, __MODULE__
   quote do
     :eqc.forall(:pulse.seed(),
@@ -146,9 +146,9 @@ defmacro withPulse(do: action, after: clauses) when action != nil and clauses !=
       end)
   end
 end
-defmacro withPulse(opts) do
+defmacro with_pulse(opts) do
   _ = opts
-  raise(ArgumentError, "Syntax: withPulse do: ACTION, after: (RES -> PROP)")
+  raise(ArgumentError, "Syntax: with_pulse do: ACTION, after: (RES -> PROP)")
 end
 
 end
