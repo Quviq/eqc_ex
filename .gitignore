@@ -1,2 +1,6 @@
 .DS_Store
 mix.lock
+*/_build
+*/deps
+erl_crash.dump
+*.ez
