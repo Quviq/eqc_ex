@@ -1,4 +1,3 @@
-
 defmodule EQC do
 
 @copyright "Quviq AB, 2014"
