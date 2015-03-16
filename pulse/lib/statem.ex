@@ -17,84 +17,46 @@ defmodule EQC.StateM do
 		end
 	end
 
-	defmacro commands(mod) do
-		quote do
-			:eqc_statem.commands(unquote(mod))
-		end
+	def commands(mod) do :eqc_statem.commands(mod) end
+	
+	def commands(mod, initial_state) do
+		:eqc_statem.commands(mod, initial_state) end
+
+	def run_commands(mod, cmds) do
+		run_commands(mod, cmds, []) end
+
+	def run_commands(mod, cmds, env) do
+		{history, state, result} = :eqc_statem.run_commands(mod, cmds, env)
+		[history: history, state: state, result: result]
 	end
 
-	defmacro commands(mod, initial_state) do
-		quote do
-			:eqc_statem.commands(unquote(mod), unquote(initial_state))
-		end
-	end
-
-	defmacro run_commands(mod, cmds) do
-		quote do
-			{history, state, result} = :eqc_statem.run_commands(unquote(mod), unquote(cmds))
-			[history: history, state: state, result: result]
-
-		end
-	end
-
-	defmacro run_commands(mod, cmds, env) do
-		quote do
-			{history, state, result} = :eqc_statem.run_commands(unquote(mod), unquote(cmds), unquote(env))
-			[history: history, state: state, result: result]
-		end
-	end
-
-	defmacro parallel_commands(mod) do
-		quote do
-			:eqc_statem.parallel_commands(unquote(mod))
-		end
-	end
+	def parallel_commands(mod) do
+		:eqc_statem.parallel_commands(mod) end
 
 	defmacro parallel_commands(mod, initial_state) do
-		quote do
-			:eqc_statem.parallel_commands(unquote(mod), unquote(initial_state))
-		end
+		:eqc_statem.parallel_commands(mod, initial_state)	end
+	
+	def run_parallel_commands(mod, cmds) do
+		run_parallel_commands(mod, cmds, []) end
+
+	def run_parallel_commands(mod, cmds, env) do
+		{history, state, result} = :eqc_statem.run_parallel_commands(mod, cmds, env)
+		[history: history, state: state, result: result]
 	end
 	
-	defmacro run_parallel_commands(mod, cmds) do
-		quote do
-			{history, state, result} = :eqc_statem.run_parallel_commands(unquote(mod), unquote(cmds))
-			[history: history, state: state, result: result]
-
-		end
+	def pretty_commands(mod, cmds, res, bool) do
+		:eqc_statem.pretty_commands(mod, cmds,
+																{res[:history], res[:state], res[:result]},
+																bool)
 	end
 
-	defmacro run_parallel_commands(mod, cmds, env) do
-		quote do
-			{history, state, result} = :eqc_statem.run_parallel_commands(unquote(mod), unquote(cmds), unquote(env))
-			[history: history, state: state, result: result]
-		end
-	end
-	
-	defmacro pretty_commands(mod, cmds, run_result, bool) do
-		quote do
-			res = unquote(run_result)
-			:eqc_statem.pretty_commands(unquote(mod), unquote(cmds),
-																	{res[:history], res[:state], res[:result]},
-																	unquote(bool))
-		end
-	end
+	def check_commands(mod, cmds, run_result) do
+		check_commands(mod, cmds, run_result, []) end
 
-	defmacro check_commands(mod, cmds, run_result) do
-		quote do
-			res = unquote(run_result)
-			:eqc_statem.check_commands(unquote(mod), unquote(cmds),
-																	{res[:history], res[:state], res[:result]})
-		end
-	end
-
-	defmacro check_commands(mod, cmds, run_result, env) do
-		quote do
-			res = unquote(run_result)
-			:eqc_statem.check_commands(unquote(mod), unquote(cmds),
-																	{res[:history], res[:state], res[:result]},
-																	unquote(env))
-		end
+	def check_commands(mod, cmds, res, env) do
+		:eqc_statem.check_commands(mod, cmds,
+															 {res[:history], res[:state], res[:result]},
+															 env)
 	end
 
 	defmacro weight(state, cmds) do
@@ -107,6 +69,5 @@ defmodule EQC.StateM do
 					def weight(unquote(state), _) do 1 end
 			  end ]
 	end
-
 	
 end
