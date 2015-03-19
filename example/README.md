@@ -1,4 +1,0 @@
-Example
-=======
-
-** TODO: Add description **

@@ -1,4 +1,0 @@
-PulseTest
-=========
-
-** TODO: Add description **
