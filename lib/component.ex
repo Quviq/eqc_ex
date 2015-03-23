@@ -31,6 +31,12 @@ defmacro call(fun, args) do
   end
 end
 
+def callout(mod, fun, args, res), do: :eqc_component.callout(mod, fun, args, res)
+
+defmacro match(e={:=, _, [_, _]}) do
+  {:"$eqc_callout_match", e}
+end
+
 # -- Wrapper functions ------------------------------------------------------
 
 def run_commands(mod, cmds) do
