@@ -63,6 +63,10 @@ end
 
 def fail(e), do: {:fail, e}
 
+defmacro exception(e) do
+  quote do {:"$eqc_exception", unquote(e)} end
+end
+
 # -- Wrapper functions ------------------------------------------------------
 
 def run_commands(mod, cmds) do
