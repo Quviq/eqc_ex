@@ -2,25 +2,15 @@ defmodule EQC.StateM do
 		
 	defmacro __using__(_opts) do
     quote do
-			import EQC
-			import :eqc_gen
+			import :eqc_statem, only: [commands: 1, commands: 2,
+																 parallel_commands: 1, parallel_commands: 2,
+																 eq: 2, command_names: 1]
 			import EQC.StateM
 
 			@file "eqc_statem.hrl"
 			@compile {:parse_transform, :eqc_group_commands}
 		end
   end
-
-	defmacro eq(a,b) do
-		quote do
-			:eqc_statem.eq(unquote(a),unquote(b))
-		end
-	end
-
-	def commands(mod) do :eqc_statem.commands(mod) end
-	
-	def commands(mod, initial_state) do
-		:eqc_statem.commands(mod, initial_state) end
 
 	def run_commands(mod, cmds) do
 		run_commands(mod, cmds, []) end
@@ -29,12 +19,6 @@ defmodule EQC.StateM do
 		{history, state, result} = :eqc_statem.run_commands(mod, cmds, env)
 		[history: history, state: state, result: result]
 	end
-
-	def parallel_commands(mod) do
-		:eqc_statem.parallel_commands(mod) end
-
-	defmacro parallel_commands(mod, initial_state) do
-		:eqc_statem.parallel_commands(mod, initial_state)	end
 	
 	def run_parallel_commands(mod, cmds) do
 		run_parallel_commands(mod, cmds, []) end
