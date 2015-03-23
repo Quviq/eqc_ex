@@ -26,9 +26,8 @@ end
 
 def call(mod, fun, args), do: {:self_callout, mod, fun, args}
 defmacro call(fun, args) do
-  mod = Macro.var :mod, __MODULE__
   quote do
-    call(unquote(mod), unquote(fun), unquote(args))
+    call(__MODULE__, unquote(fun), unquote(args))
   end
 end
 
