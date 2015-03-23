@@ -30,6 +30,13 @@ defmacro call(fun, args) do
     call(__MODULE__, unquote(fun), unquote(args))
   end
 end
+defmacro call({{:., _, [mod, fun]}, _, args}) do
+  quote do call(unquote(mod), unquote(fun), unquote(args)) end
+end
+defmacro call({fun, _, args}) when is_atom(fun) do
+  quote do call(__MODULE__, unquote(fun), unquote(args)) end
+end
+defmacro call(_), do: raise(ArgumentError, "Usage: call F(E1, .., En)")
 
 def callout(mod, fun, args, res), do: :eqc_component.callout(mod, fun, args, res)
 
