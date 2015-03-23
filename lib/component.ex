@@ -40,9 +40,9 @@ defmacro call(_), do: raise(ArgumentError, "Usage: call F(E1, .., En)")
 
 def callout(mod, fun, args, res), do: :eqc_component.callout(mod, fun, args, res)
 
-defmacro match(e={:=, _, [_, _]}) do
-  {:"$eqc_callout_match", e}
-end
+defmacro match(e={:=,  _, [_, _]}), do: {:"$eqc_callout_match", e}
+defmacro match(e={:<-, _, [_, _]}), do: {:"$eqc_callout_match_gen", e}
+defmacro match(_), do: raise(ArgumentError, "Usage: match PAT = EXP, or match PAT <- GEN")
 
 def fail(e), do: {:fail, e}
 
