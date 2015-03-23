@@ -37,6 +37,8 @@ defmacro match(e={:=, _, [_, _]}) do
   {:"$eqc_callout_match", e}
 end
 
+def fail(e), do: {:fail, e}
+
 # -- Wrapper functions ------------------------------------------------------
 
 def run_commands(mod, cmds) do
