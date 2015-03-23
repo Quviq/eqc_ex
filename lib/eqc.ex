@@ -11,10 +11,10 @@ defmodule EQC do
   `Copyright (C) Quviq AB, 2014.`
 """
 
-	defmacro __using__(_opts) do
+  defmacro __using__(_opts) do
     quote do
-			import EQC
-			import :eqc_gen
+      import EQC
+      import :eqc_gen
     end
   end
 
@@ -361,7 +361,7 @@ Usage:
     end
 
 Performs `setup` before a test run (default 100 tests) without `teardown` function
-after the test run. 
+after the test run.
 
 In Erlang: `?SETUP(fun() -> X = Setup, fun() -> ok end, Prop)`.
 """
@@ -408,49 +408,49 @@ defp syntax_error(err), do: raise(ArgumentError, "Usage: " <> err)
 A property combinator to obtain test statistics
 
 Usage:
-   collect KeywordList, 
+   collect KeywordList,
       in: prop
    end
 
 Example:
-		forall {m, n} <- {int, int} do
-			collect m: m, n: n,
-			in:
-			    length(Enum.to_list(m .. n)) == abs(n - m) + 1 
-		end
+    forall {m, n} <- {int, int} do
+      collect m: m, n: n,
+      in:
+          length(Enum.to_list(m .. n)) == abs(n - m) + 1
+    end
 """
-	defmacro collect(xs) do
-		case Enum.reverse(xs) do
-			[ {:in, prop} | tail] ->
-				do_collect(tail, prop)
-			_ ->
-				throw("Wrong property format")
-		end
-	end
+  defmacro collect(xs) do
+    case Enum.reverse(xs) do
+      [ {:in, prop} | tail] ->
+        do_collect(tail, prop)
+      _ ->
+        throw("Wrong property format")
+    end
+  end
 
-	defp do_collect([{tag, {:in, _, [count,requirement]}} | t], acc) do
-		acc = quote do: :eqc.collect(
-					fn res ->
-						case (unquote(requirement) -- Keyword.keys(res)) do
-							[] -> :ok
-							uncovered ->
-								:eqc.format("Warning: not all features covered! ~p\n",[uncovered])
-						end
-						:eqc.with_title(unquote(tag)).(res)		
-					end, unquote(count), unquote(acc))
-		do_collect(t, acc)
-	end
-	defp do_collect([{tag, term} | t], acc) do
-		acc = quote do: :eqc.collect(:eqc.with_title(unquote(tag)), unquote(term), unquote(acc))
-		do_collect(t, acc)
-	end
-	defp do_collect([], acc) do acc
-	end
-	
+  defp do_collect([{tag, {:in, _, [count,requirement]}} | t], acc) do
+    acc = quote do: :eqc.collect(
+          fn res ->
+            case (unquote(requirement) -- Keyword.keys(res)) do
+              [] -> :ok
+              uncovered ->
+                :eqc.format("Warning: not all features covered! ~p\n",[uncovered])
+            end
+            :eqc.with_title(unquote(tag)).(res)
+          end, unquote(count), unquote(acc))
+    do_collect(t, acc)
+  end
+  defp do_collect([{tag, term} | t], acc) do
+    acc = quote do: :eqc.collect(:eqc.with_title(unquote(tag)), unquote(term), unquote(acc))
+    do_collect(t, acc)
+  end
+  defp do_collect([], acc) do acc
+  end
+
   ## probably put somewhere else EQC-Suite for example?
   def feature(term, prop) do
-		:eqc.collect( term, :eqc.features([term], prop))
-	end
+    :eqc.collect( term, :eqc.features([term], prop))
+  end
 
 
 end
