@@ -40,6 +40,10 @@ defmacro call(_), do: raise(ArgumentError, "Usage: call F(E1, .., En)")
 
 def callout(mod, fun, args, res), do: :eqc_component.callout(mod, fun, args, res)
 
+defmacro callout({{:., _, [mod, fun]}, _, args}, [return: res]) do
+  quote do callout(unquote(mod), unquote(fun), unquote(args), unquote(res)) end
+end
+
 defp do_match(e) do
   quote do {:"$eqc_callout_match", unquote(e)} end
 end
