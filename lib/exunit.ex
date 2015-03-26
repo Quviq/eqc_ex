@@ -5,8 +5,7 @@ defmodule EQC.ExUnit do
   defmacro __using__(_opts) do
     quote do
       import EQC.ExUnit
-      import EQC
-      import :eqc_gen
+      use EQC
     end
   end
 
