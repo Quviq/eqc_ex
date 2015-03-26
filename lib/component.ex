@@ -58,7 +58,7 @@ defmacro match(_), do: raise(ArgumentError, "Usage: match PAT = EXP, or match PA
 
 # Hacky. Let's you write (for instance) match pat = case exp do ... end.
 defmacro match({:=, cxt1, [pat, {fun, cxt2, args}]}, opts) do
-  do_match({:=, cxt1, [pat, {fun, cxt2, args ++ opts}]})
+  do_match({:=, cxt1, [pat, {fun, cxt2, args ++ [opts]}]})
 end
 
 def fail(e), do: {:fail, e}
