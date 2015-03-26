@@ -56,9 +56,9 @@ defmacro match(e={:=,  _, [_, _]}), do: do_match(e)
 defmacro match(e={:<-, _, [_, _]}), do: do_match_gen(e)
 defmacro match(_), do: raise(ArgumentError, "Usage: match PAT = EXP, or match PAT <- GEN")
 
-# Hacky
-defmacro match({:=, cxt1, [pat, {:case, cxt2, [exp]}]}, [do: branches]) do
-  do_match({:=, cxt1, [pat, {:case, cxt2, [exp, [do: branches]]}]})
+# Hacky. Let's you write (for instance) match pat = case exp do ... end.
+defmacro match({:=, cxt1, [pat, {fun, cxt2, args}]}, opts) do
+  do_match({:=, cxt1, [pat, {fun, cxt2, args ++ opts}]})
 end
 
 def fail(e), do: {:fail, e}
