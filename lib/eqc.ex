@@ -14,7 +14,7 @@ defmodule EQC do
   defmacro __using__(_opts) do
     quote do
       import EQC
-      import :eqc_gen
+      import :eqc_gen, except: [lazy: 1]
     end
   end
 
