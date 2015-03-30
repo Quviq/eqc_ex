@@ -15,7 +15,7 @@ defmacro __using__(_opts) do
     import :eqc_component, only: [commands: 1, commands: 2]
     import :eqc_statem, only: [eq: 2, command_names: 1]
     import EQC.Component
-    use EQC.Component.Callouts
+    import EQC.Component.Callouts
 
     @file "eqc_component.hrl"
     @compile {:parse_transform, :eqc_group_commands}
