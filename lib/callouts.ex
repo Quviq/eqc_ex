@@ -139,9 +139,6 @@ In Erlang: `?RET(X)`
 """
 def ret(x), do: {:return, x}
 
-@doc false
-def assert(mod, fun, args, err), do: {:assert, mod, fun, args, err}
-
 @doc """
 Run-time assertion.
 
@@ -150,8 +147,8 @@ In Erlang: `?ASSERT(Mod, Fun, Args)`
 defmacro assert(mod, fun, args) do
   loc = {__CALLER__.file, __CALLER__.line}
   quote do
-    assert(unquote(mod), unquote(fun), unquote(args),
-      {:assertion_failed, unquote(mod), unquote(fun), unquote(args), unquote(loc)})
+    {:assert, unquote(mod), unquote(fun), unquote(args),
+      {:assertion_failed, unquote(mod), unquote(fun), unquote(args), unquote(loc)}}
   end
 end
 
