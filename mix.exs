@@ -3,7 +3,7 @@ defmodule EQC.Mixfile do
 
   def project do
     [ app: :eqc_ex,
-      version: "1.2.0",
+      version: "1.2.1",
       elixir: "~> 1.0",
       deps: deps,
       package: [ contributors: ["Quviq AB"],
