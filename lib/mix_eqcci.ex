@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Eqcci do
+defmodule Mix.Tasks.EqcCI do
   use Mix.Task
 
   @shortdoc "Create a project's properties for QuickCheck-CI"
