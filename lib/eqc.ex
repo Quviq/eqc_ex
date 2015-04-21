@@ -15,6 +15,7 @@ defmodule EQC do
     quote do
       import EQC
       import :eqc_gen, except: [lazy: 1]
+
     end
   end
 
@@ -452,5 +453,20 @@ Example:
     :eqc.collect( term, :eqc.features([term], prop))
   end
 
+  @doc """
+A property checking equality that prints when terms are inequal
+
+Usage:
+
+    equals(t1, t2)
+
+In Erlang: `equals(T1, T2)`.
+"""
+def equals(t1,t2) do
+  when_fail  [ IO.inspect(t1), IO.write(" =/= "), IO.inspect(t2) ] do 
+     # Inspect.Algebra.glue(Inspect.Algebra.to_doc(t1)," =/= ", Inspect.Algebra.to_doc(t2))) do
+    t1 == t2
+  end
+end
 
 end
