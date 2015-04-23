@@ -2,6 +2,25 @@
 defmodule EQC.ExUnit do
   import ExUnit.Case
 
+  defmodule Pretty do
+
+    def print(true), do: ""
+    def print([]), do: "\n"
+    def print([term|tail]), do: pp(term) <> "\n   " <> print(tail)
+      
+    def pp(term) do
+      case command_sequence(term) do
+        true  ->
+          "commands"
+        false ->
+          Macro.to_string(term)
+      end
+    end
+
+    defp command_sequence([{:set, {:var, _}, {:call, _, _, _}}|_]), do: true
+    defp command_sequence(_), do: false
+  end
+  
   defmacro __using__(_opts) do
     quote do
       import EQC.ExUnit
@@ -20,7 +39,7 @@ defmodule EQC.ExUnit do
       def unquote(eqc_propname(description))(), do: unquote(prop)
       test unquote("Property " <> description) do
         counterexample = :eqc.counterexample(unquote(prop))
-        assert true == counterexample, :counterexample, counterexample, unquote(string)
+        assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
       end
     end
   end

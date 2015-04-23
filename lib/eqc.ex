@@ -462,8 +462,10 @@ Usage:
 
 In Erlang: `equals(T1, T2)`.
 """
-def equals(t1,t2) do
-  when_fail  [ IO.inspect(t1), IO.write(" =/= "), IO.inspect(t2) ] do 
+  # make this general, extract operator from the parse tree and put that in the IO.puts
+  # Use either ensure or assert or something to make it more "natural"
+  def equals(t1,t2) do
+  when_fail IO.puts(inspect(t1) <> " =/= " <> inspect(t2)) do 
      # Inspect.Algebra.glue(Inspect.Algebra.to_doc(t1)," =/= ", Inspect.Algebra.to_doc(t2))) do
     t1 == t2
   end
