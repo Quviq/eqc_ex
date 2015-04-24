@@ -5,6 +5,7 @@ defmodule EQC.Mixfile do
     [ app: :eqc_ex,
       version: "1.2.2",
       elixir: "~> 1.0",
+      test_pattern: "*_{test,eqc}.exs",
       deps: deps,
       package: [ contributors: ["Quviq AB"],
                  licenses: ["BSD"],
