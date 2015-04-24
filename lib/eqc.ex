@@ -461,7 +461,7 @@ Usage:
     ensure t1 == t2
     ensure t1 > t2
 
-In Erlang ?WHENFAILS(eqc_format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T1 Operator T2).
+In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T1 Operator T2).
 """
 
   @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
@@ -470,7 +470,7 @@ In Erlang ?WHENFAILS(eqc_format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
     quote do
       left  = unquote(left)
       right = unquote(right)
-      when_fail :eqc.format("not ensured: ~s", [
+      when_fail :eqc.format("not ensured: ~s\n", [
         inspect(left) <> unquote(" #{operator} ") <> inspect(right)]) do
         unquote(operator)(left, right)
       end
