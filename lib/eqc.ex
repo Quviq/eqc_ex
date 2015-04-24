@@ -454,21 +454,27 @@ Example:
   end
 
   @doc """
-A property checking equality that prints when terms are inequal
+A property checking an operation and prints when relation is violated
 
 Usage:
 
-    equals(t1, t2)
+    ensure t1 == t2
+    ensure t1 > t2
 
-In Erlang: `equals(T1, T2)`.
+In Erlang ?WHENFAILS(eqc_format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T1 Operator T2).
 """
-  # make this general, extract operator from the parse tree and put that in the IO.puts
-  # Use either ensure or assert or something to make it more "natural"
-  def equals(t1,t2) do
-  when_fail IO.puts(inspect(t1) <> " =/= " <> inspect(t2)) do 
-     # Inspect.Algebra.glue(Inspect.Algebra.to_doc(t1)," =/= ", Inspect.Algebra.to_doc(t2))) do
-    t1 == t2
+
+  @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
+  defmacro ensure({operator, _, [left, right]} = expr) when operator in @operator  do
+    expr = Macro.escape(expr)
+    quote do
+      left  = unquote(left)
+      right = unquote(right)
+      when_fail :eqc.format("not ensured: ~s", [
+        inspect(left) <> unquote(" #{operator} ") <> inspect(right)]) do
+        unquote(operator)(left, right)
+      end
+    end
   end
-end
 
 end
