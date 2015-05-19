@@ -54,4 +54,15 @@ defmodule EQC.StateM do
         end ]
   end
 
+  defmacro symcall({{:., _, [mod, fun]}, _, args}) do
+    quote do
+      {:call, unquote(mod), unquote(fun), unquote(args)}
+    end
+  end
+
+  defmacro symcall({fun, _, args}) do
+    quote do
+      {:call, __MODULE__, unquote(fun), unquote(args)}
+    end
+  end
 end
