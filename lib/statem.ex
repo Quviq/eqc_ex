@@ -4,7 +4,7 @@ defmodule EQC.StateM do
     quote do
       import :eqc_statem, only: [commands: 1, commands: 2,
                                  parallel_commands: 1, parallel_commands: 2,
-                                 eq: 2, command_names: 1]
+                                 eq: 2, command_names: 1, more_commands: 2]
       import EQC.StateM
 
       @file "eqc_statem.hrl"
