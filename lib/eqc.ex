@@ -51,17 +51,24 @@ Bind a generated value for use by another generator.
 Usage:
 
     let pat <- gen1 do
-      gen2
+      gen_a
     end
 
-The variables of `pat` are bound in `gen2`.
+    let [pat1 <- gen1, pat2 <- gen2] do
+      gen_b
+    end
+
+The variables of `pat` or `pat1` and `pat2` are bound in `gen_a` or in `gen_b`, respectively.
 
 In Erlang: `?LET(Pat, Gen1, Gen2)`.
 """
-defmacro let({:<-, _, [x, g]}, do: body) when body != nil, do: eqc_bind(x, g, body)
-defmacro let(bind, gen) do
-  _ = {bind, gen}
-  syntax_error "let PAT <- GEN, do: GEN"
+defmacro let(bindings, do: body) when body != nil, do: do_let(bindings, body)
+
+defp do_let({:<-, _, [_, _]}=binding, body), do: do_let([binding], body)
+defp do_let([{:<-, _, [x, g]}|rest], body), do: eqc_bind(x, g, do_let(rest, body))
+defp do_let([], body), do: body
+defp do_let(_, _) do
+  syntax_error "let PAT <- GEN, do: GEN  or  let [PAT1 <- GEN1, PAT2 <- GEN2, ...], do: GEN"
 end
 
 @doc """
