@@ -1,8 +1,7 @@
 defmodule EQC.Mocking do
+  @copyright "Quviq AB, 2014-2015"
 
-@copyright "Quviq AB, 2014-2015"
-
-@moduledoc """
+  @moduledoc """
   This module contains macros to be used with [Quviq
   QuickCheck](http://www.quviq.com). It defines Elixir versions of the Erlang
   macros found in `eqc/include/eqc_mocking.hrl`. For detailed documentation of the
@@ -20,11 +19,10 @@ defmodule EQC.Mocking do
       ]
     ]
   end
-"""
+  """
   require Record
 
   Record.defrecord :api_spec, Record.extract(:api_spec, from_lib: "eqc/include/eqc_mocking.hrl")
   Record.defrecord :api_module, Record.extract(:api_module, from_lib: "eqc/include/eqc_mocking.hrl")
   Record.defrecord :api_fun, Record.extract(:api_fun, from_lib: "eqc/include/eqc_mocking.hrl")
-
 end

@@ -1,4 +1,3 @@
-
 defmodule EQC.ExUnit do
   import ExUnit.Case
 
@@ -55,5 +54,4 @@ defmodule EQC.ExUnit do
       end
     end
   end
-
 end
