@@ -1,5 +1,4 @@
 defmodule EQC.StateM do
-
   defmacro __using__(_opts) do
     quote do
       import :eqc_statem, only: [commands: 1, commands: 2,
@@ -54,6 +53,17 @@ defmodule EQC.StateM do
         end ]
   end
 
+  @doc """
+  Converts the given call expression into a symbolic call.
+
+  ## Examples
+
+      symcall extract_pid(result)
+      # {:call, __MODULE__, :extract_pid, [result]}
+
+      symcall OtherModule.do_something(result, args)
+      # {:call, OtherModule, :do_something, [result, args]}
+  """
   defmacro symcall({{:., _, [mod, fun]}, _, args}) do
     quote do
       {:call, unquote(mod), unquote(fun), unquote(args)}
