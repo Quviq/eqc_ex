@@ -57,7 +57,8 @@ defmodule EQC do
         gen_b
       end
 
-  The variables of `pat` or `pat1` and `pat2` are bound in `gen_a` or in `gen_b`, respectively.
+  In the first example, the variables of `pat` are bound in `gen_a`.
+  In the second example, the variables of `pat1` scope over both `gen2` and `gen_b`.
 
   In Erlang: `?LET(Pat, Gen1, Gen2)`.
   """
@@ -414,9 +415,7 @@ defmodule EQC do
   A property combinator to obtain test statistics
 
   Usage:
-     collect KeywordList,
-        in: prop
-     end
+     collect KeywordList, in: prop
 
   Example:
       forall {m, n} <- {int, int} do
@@ -430,7 +429,7 @@ defmodule EQC do
       [ {:in, prop} | tail] ->
         do_collect(tail, prop)
       _ ->
-        throw("Wrong property format")
+        syntax_error "collect KEYWORDLIST, in: PROP"
     end
   end
 
