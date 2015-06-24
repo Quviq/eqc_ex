@@ -4,7 +4,7 @@ defmodule EQC.StateM do
     quote do
       import :eqc_statem, only: [commands: 1, commands: 2,
                                  parallel_commands: 1, parallel_commands: 2,
-                                 eq: 2, command_names: 1]
+                                 eq: 2, command_names: 1, more_commands: 2]
       import EQC.StateM
 
       @file "eqc_statem.hrl"
@@ -54,4 +54,15 @@ defmodule EQC.StateM do
         end ]
   end
 
+  defmacro symcall({{:., _, [mod, fun]}, _, args}) do
+    quote do
+      {:call, unquote(mod), unquote(fun), unquote(args)}
+    end
+  end
+
+  defmacro symcall({fun, _, args}) do
+    quote do
+      {:call, __MODULE__, unquote(fun), unquote(args)}
+    end
+  end
 end
