@@ -23,6 +23,8 @@ defmodule EQC.Mixfile do
     [
       readme: "README.md",
       main: "EQC",
+      source_ref: "release", #"v#{@version}",
+      source_url: "https://github.com/Quviq/eqc_ex",
     ]
   end
 
