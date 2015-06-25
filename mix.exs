@@ -38,6 +38,6 @@ defmodule EQC.Mixfile do
   end
 
   defp deps do
-    [{:ex_doc, github: "elixir-lang/ex_doc", only: :docs}]
+    [{:ex_doc, github: "elixir-lang/ex_doc", only: :dev}]
   end
 end
