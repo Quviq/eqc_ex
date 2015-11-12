@@ -37,8 +37,13 @@ defmodule EQC.ExUnit do
     string = Macro.to_string(prop)
     quote do
       def unquote(eqc_propname(description))(), do: unquote(prop)
-      test unquote("Property " <> description) do
-        counterexample = :eqc.counterexample(unquote(prop))
+      test unquote("Property " <> description), context do
+        counterexample =
+          if num = context[:num_tests] do
+            :eqc.counterexample(:eqc.numtests(num, unquote(prop)))
+          else
+            :eqc.counterexample(unquote(prop))
+          end
         assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
       end
     end
