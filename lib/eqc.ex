@@ -452,7 +452,7 @@ defmodule EQC do
   end
   defp do_collect([], acc) do acc
   end
-
+  
   ## probably put somewhere else EQC-Suite for example?
   def feature(term, prop) do
     :eqc.collect( term, :eqc.features([term], prop))
@@ -471,7 +471,6 @@ In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
 
   @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
   defmacro ensure({operator, _, [left, right]} = expr) when operator in @operator  do
-    expr = Macro.escape(expr)
     quote do
       left  = unquote(left)
       right = unquote(right)

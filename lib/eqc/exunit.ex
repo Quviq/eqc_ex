@@ -38,12 +38,7 @@ defmodule EQC.ExUnit do
     quote do
       def unquote(eqc_propname(description))(), do: unquote(prop)
       test unquote("Property " <> description), context do
-        counterexample =
-          if num = context[:num_tests] do
-            :eqc.counterexample(:eqc.numtests(num, unquote(prop)))
-          else
-            :eqc.counterexample(unquote(prop))
-          end
+        counterexample = :eqc.counterexample(transform unquote(prop), context)
         assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
       end
     end
@@ -54,5 +49,25 @@ defmodule EQC.ExUnit do
       unquote(eqc_propname(description))()
     end
   end
+
+  def transform(prop, opts), do: do_transform(prop, Enum.uniq(opts))
+
+  defp do_transform(prop, []) do
+    prop
+  end
+  defp do_transform(prop, [{:numtests, nr}| opts]) do
+    do_transform(:eqc.numtests(nr, prop), opts)
+  end
+  defp do_transform(prop, [{:min_time, ms} | opts]) do
+    do_transform(:eqc.testing_time({:min, div(ms, 1000)}, prop), opts)
+  end
+  defp do_transform(prop, [{:timeout, ms} | opts]) do
+    do_transform(:eqc.testing_time({:max,div(ms, 1000)}, prop), opts)
+  end
+  defp do_transform(prop, [_ | opts]) do
+    do_transform(prop, opts)
+  end
+
+
 
 end
