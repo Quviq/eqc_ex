@@ -470,7 +470,7 @@ In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
 """
 
   @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
-  defmacro ensure({operator, _, [left, right]} = expr) when operator in @operator  do
+  defmacro ensure({operator, _, [left, right]}) when operator in @operator  do
     quote do
       left  = unquote(left)
       right = unquote(right)
