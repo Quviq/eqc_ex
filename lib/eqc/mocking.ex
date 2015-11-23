@@ -22,7 +22,12 @@ defmodule EQC.Mocking do
   """
   require Record
 
-  Record.defrecord :api_spec, Record.extract(:api_spec, from_lib: "eqc/include/eqc_mocking_api.hrl")
-  Record.defrecord :api_module, Record.extract(:api_module, from_lib: "eqc/include/eqc_mocking_api.hrl")
-  Record.defrecord :api_fun, Record.extract(:api_fun, from_lib: "eqc/include/eqc_mocking_api.hrl")
+  try do
+    Record.defrecord :api_spec,   Record.extract(:api_spec, from_lib: "eqc/include/eqc_mocking_api.hrl")
+    Record.defrecord :api_module, Record.extract(:api_module, from_lib: "eqc/include/eqc_mocking_api.hrl")
+    Record.defrecord :api_fun,    Record.extract(:api_fun, from_lib: "eqc/include/eqc_mocking_api.hrl")
+  rescue _ ->
+      "Full Version of QuickCheck Needed"
+  end
+  
 end
