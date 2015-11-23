@@ -1,6 +1,6 @@
 {application, eqc_ex,
  [{description,  "QuickCheck for Elixir"},
-  {vsn,          "1.2.0"},
+  {vsn,          "1.2.4"},
   {modules,      []},
   {registered,   []},
   {applications, [kernel, stdlib]}
