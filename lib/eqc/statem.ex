@@ -42,6 +42,17 @@ defmodule EQC.StateM do
                                env)
   end
 
+  @doc """
+  Add weights to the commands in a statem specification
+
+  ## Example
+
+      weight _, take: 10, reset: 1
+      # Choose 10 times more 'take' than 'reset'
+
+      weight s, take: 10, reset: s
+      # The more tickets taken, the more likely reset becomes
+  """
   defmacro weight(state, cmds) do
     for {cmd, w} <- cmds do
       quote do

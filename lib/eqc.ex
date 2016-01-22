@@ -474,7 +474,7 @@ In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
     quote do
       left  = unquote(left)
       right = unquote(right)
-      when_fail :eqc.format("not ensured: ~s\n", [
+      when_fail :eqc.format("not ensured: ~ts\n", [
         inspect(left) <> unquote(" #{operator} ") <> inspect(right)]) do
         unquote(operator)(left, right)
       end
