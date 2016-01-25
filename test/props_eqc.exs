@@ -3,12 +3,13 @@ defmodule SimpleTests do
   use EQC.ExUnit
 
   #@moduletag numtests: 80
-  
+
+
+  @tag print_counterexample: false
   property "naturals are >= 0" do
-    :eqc.fails(
     forall n <- nat do
       ensure n > 0
-    end)
+    end
   end
 
   @tag numtests: 31
@@ -31,6 +32,12 @@ defmodule SimpleTests do
   property "min testing_time too long" do
     forall _min_long <- int do
       true
+    end
+  end
+
+  property "reverse strings" do
+    forall s <- utf8 do
+      ensure String.reverse(String.reverse(s)) == s
     end
   end
   
