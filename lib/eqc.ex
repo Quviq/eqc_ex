@@ -472,11 +472,11 @@ In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
   @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
   defmacro ensure({operator, _, [left, right]}) when operator in @operator  do
     quote do
-      left  = unquote(left)
-      right = unquote(right)
-      when_fail :eqc.format("not ensured: ~ts\n", [
-        inspect(left) <> unquote(" #{operator} ") <> inspect(right)]) do
-        unquote(operator)(left, right)
+      uleft  = unquote(left)
+      uright = unquote(right)
+      when_fail :eqc.format("~ts\n", [
+            "not ensured: #{uleft} #{unquote operator} #{uright}"]) do
+        unquote(operator)(uleft, uright)
       end
     end
   end
