@@ -64,6 +64,9 @@ defmodule EQC.ExUnit do
   defp do_transform(prop, [{:timeout, ms} | opts]) do
     do_transform(:eqc.testing_time({:max,div(ms, 1000)}, prop), opts)
   end
+  defp do_transform(prop, [{:print_counterexample, b} | opts]) do
+    do_transform(:eqc_gen.with_parameter(:print_counterexample, b, prop), opts)
+  end
   defp do_transform(prop, [_ | opts]) do
     do_transform(prop, opts)
   end
