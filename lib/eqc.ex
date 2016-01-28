@@ -475,8 +475,8 @@ In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
     quote do
       uleft  = unquote(left)
       uright = unquote(right)
-      when_fail :eqc.format("~ts\n", [
-            "not ensured: #{uleft} #{unquote operator} #{uright}"]) do
+      message = "not ensured: #{inspect(uleft)} #{unquote operator} #{inspect(uright)}"
+      when_fail :eqc.format("~ts\n", [message]) do
         unquote(operator)(uleft, uright)
       end
     end
@@ -494,12 +494,11 @@ Usage:
 In Erlang eq(t1, t2).
 """
 
-  @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
   defmacro satisfy({operator, _, [left, right]}) when operator in @operator  do
     quote do
       uleft  = unquote(left)
       uright = unquote(right)
-      unquote(operator)(uleft, uright) || 'violated #{uleft} #{unquote(operator)} #{uright}'  # { uleft, unquote(operator), uright }
+      unquote(operator)(uleft, uright) || 'violated #{inspect(uleft)} #{unquote(operator)} #{inspect(uright)}'
     end
   end
 
