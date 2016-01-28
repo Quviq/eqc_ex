@@ -459,7 +459,8 @@ defmodule EQC do
   end
 
   @doc """
-A property checking an operation and prints when relation is violated
+A property checking an operation and prints when relation is violated.
+In postconditions, one uses satisfy instead.
 
 Usage:
 
@@ -478,6 +479,27 @@ In Erlang ?WHENFAILS(eqc:format("not ensured: ~p ~p ~p\n",[T1, Operator, T2]), T
             "not ensured: #{uleft} #{unquote operator} #{uright}"]) do
         unquote(operator)(uleft, uright)
       end
+    end
+  end
+
+    @doc """
+A condition modifier for operators to be used in postconditions.
+Instead of returning false, it returns a tuple representation of failing operator.
+
+Usage:
+
+    satisfy t1 == t2
+    satisfy t1 > t2
+
+In Erlang eq(t1, t2).
+"""
+
+  @operator [:==, :<, :>, :<=, :>=, :===, :=~, :!==, :!=, :in]
+  defmacro satisfy({operator, _, [left, right]}) when operator in @operator  do
+    quote do
+      uleft  = unquote(left)
+      uright = unquote(right)
+      unquote(operator)(uleft, uright) || 'violated #{uleft} #{unquote(operator)} #{uright}'  # { uleft, unquote(operator), uright }
     end
   end
 
