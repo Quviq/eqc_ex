@@ -5,7 +5,7 @@ defmodule SimpleTests do
   #@moduletag numtests: 80
 
 
-  @tag print_counterexample: false
+  @tag erlang_counterexample: false
   property "naturals are >= 0" do
     forall n <- nat do
       ensure n > 0
