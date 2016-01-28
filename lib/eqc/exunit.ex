@@ -18,6 +18,8 @@ defmodule EQC.ExUnit do
     end
 
     defp command_sequence([{:set, {:var, _}, {:call, _, _, _}}|_]), do: true
+    defp command_sequence({[{:set, {:var, _}, {:call, _, _, _}}|_], _}), do: true
+    defp command_sequence({[], [[{:set, {:var, _}, {:call, _, _, _}}|_]| _]}), do: true
     defp command_sequence(_), do: false
   end
   
@@ -64,7 +66,7 @@ defmodule EQC.ExUnit do
   defp do_transform(prop, [{:timeout, ms} | opts]) do
     do_transform(:eqc.testing_time({:max,div(ms, 1000)}, prop), opts)
   end
-  defp do_transform(prop, [{:print_counterexample, b} | opts]) do
+  defp do_transform(prop, [{:erlang_counterexample, b} | opts]) do
     do_transform(:eqc_gen.with_parameter(:print_counterexample, b, prop), opts)
   end
   defp do_transform(prop, [_ | opts]) do
