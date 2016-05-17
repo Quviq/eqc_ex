@@ -1,5 +1,5 @@
 defmodule EQC.ExUnit do
-  import ExUnit.Case
+  # import ExUnit.Case
 
   defmodule Pretty do
     @moduledoc false
@@ -56,32 +56,31 @@ defmodule EQC.ExUnit do
 
   Properties can be tagged similar to ExUnit test cases.
 
-    * `numtests:` `n` - QuickCheck runs `n` test cases, default is `100`
-    * `min_time:` `t` - QuickCheck runs for at least `t` milliseconds
-    * `timeout:` `t`  - QuickCheck runs for at most `t` milliseconds
+    * `numtests:` `n`  - QuickCheck runs `n` test cases, default is `100`. This tag has priority over `min_time` and `max_time` tags.
+    * `min_time:` `t`  - QuickCheck runs for `t` milliseconds unless `numtests` is reached.
+     * `max_time:` `t`  - QuickCheck runs for at most `t` milliseconds unless `numtests` is reached.
+    * `timeout:` `t` - Inherited from ExUnit and fails if property takes more than `t` milliseconds.
     * `erlang_counterexample:` `false` - Specify whether QuickCheck should output 
-       the Erlang term that it gets as a counterexample when a property fails. Default `true`
+       the Erlang term that it gets as a counterexample when a property fails. Default `true`.
 
 
   ## Example 
-  In the example below, QuickCheck runs at most 1 second for each test.
-  For each property there is a different number of tests generated, but no matter the
-  number, the total testing time per property is 1 second.
+  In the example below, QuickCheck runs the first propery for max 1 second and the second
+  property for at least 1 second. This results in 100 tests (the default) or less for the 
+  first property and e.g. 22000 tests for the second property.
 
       defmodule SimpleTests do
         use ExUnit.Case
         use EQC.ExUnit
 
-        @moduletag timeout: 1000
-
-        @tag numtests: 80
+        @tag max_time: 1000
         property "naturals are >= 0" do
           forall n <- nat do
             ensure n >= 0
           end
         end
 
-        @tag numtests: 31000
+        @tag min_time: 1000
         property "implies fine" do
           forall {n,m} <- {int, nat} do
             implies m > n, do:
@@ -129,10 +128,10 @@ defmodule EQC.ExUnit do
     do_transform(:eqc.numtests(nr, prop), opts)
   end
   defp do_transform(prop, [{:min_time, ms} | opts]) do
-    do_transform(:eqc.testing_time({:min, div(ms, 1000)}, prop), opts)
+    do_transform(:eqc.with_testing_time_unit(1, :eqc.testing_time({:min, ms}, prop)), opts)
   end
-  defp do_transform(prop, [{:timeout, ms} | opts]) do
-    do_transform(:eqc.testing_time({:max,div(ms, 1000)}, prop), opts)
+  defp do_transform(prop, [{:max_time, ms} | opts]) do
+    do_transform(:eqc.with_testing_time_unit(1, :eqc.testing_time({:max, ms}, prop)), opts)
   end
   defp do_transform(prop, [{:erlang_counterexample, b} | opts]) do
     do_transform(:eqc_gen.with_parameter(:print_counterexample, b, prop), opts)
