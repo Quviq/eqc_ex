@@ -1,7 +1,7 @@
 defmodule EQC.Mixfile do
   use Mix.Project
 
-  @version "1.2.4"
+  @version "1.2.5"
 
   def project do
     [ app: :eqc_ex,
@@ -38,6 +38,6 @@ defmodule EQC.Mixfile do
   end
 
   defp deps do
-    [{:ex_doc, github: "elixir-lang/ex_doc", only: :dev}]
+    [{:ex_doc, "~> 0.11", only: :dev}]
   end
 end
