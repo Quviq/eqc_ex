@@ -1,5 +1,5 @@
 defmodule EQC.Mocking do
-  @copyright "Quviq AB, 2014-2015"
+  @copyright "Quviq AB, 2014-2016"
 
   @moduledoc """
   This module contains macros to be used with [Quviq
@@ -7,7 +7,7 @@ defmodule EQC.Mocking do
   macros found in `eqc/include/eqc_mocking.hrl`. For detailed documentation of the
   macros, please refer to the QuickCheck documentation.
 
-  `Copyright (C) Quviq AB, 2014-2015.`
+  `Copyright (C) Quviq AB, 2014-2016.`
 
   Typical use in Component module definitions
   require EQC.Mocking

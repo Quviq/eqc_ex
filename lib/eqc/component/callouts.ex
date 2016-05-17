@@ -1,5 +1,5 @@
 defmodule EQC.Component.Callouts do
-  @copyright "Quviq AB, 2015"
+  @copyright "Quviq AB, 2016"
 
   @moduledoc """
   This module contains functions to be used with [Quviq
@@ -7,7 +7,7 @@ defmodule EQC.Component.Callouts do
   language found in `eqc/include/eqc_component.hrl`. For detailed documentation
   of the macros, please refer to the QuickCheck documentation.
 
-  `Copyright (C) Quviq AB, 2014-2015.`
+  `Copyright (C) Quviq AB, 2014-2016.`
   """
 
   @doc """

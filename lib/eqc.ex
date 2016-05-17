@@ -1,5 +1,5 @@
 defmodule EQC do
-  @copyright "Quviq AB, 2014-2015"
+  @copyright "Quviq AB, 2014-2016"
 
   @moduledoc """
   This module contains macros to be used with [Quviq
@@ -7,7 +7,7 @@ defmodule EQC do
   macros found in `eqc/include/eqc.hrl`. For detailed documentation of the
   macros, please refer to the QuickCheck documentation.
 
-  `Copyright (C) Quviq AB, 2014-2015.`
+  `Copyright (C) Quviq AB, 2014-2016.`
   """
 
   defmacro __using__(_opts) do
