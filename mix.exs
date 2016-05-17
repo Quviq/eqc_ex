@@ -1,12 +1,12 @@
 defmodule EQC.Mixfile do
   use Mix.Project
 
-  @version "1.2.5"
+  @version "1.3.0"
 
   def project do
     [ app: :eqc_ex,
       version: @version,
-      elixir: "~> 1.0",
+      elixir: "~> 1.3",
       test_pattern: "*_{test,eqc}.exs",
       deps: deps,
       docs: docs,
