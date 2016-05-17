@@ -27,19 +27,21 @@ defmodule EQC.ExUnit do
     quote do
       import EQC.ExUnit
       use EQC
+      
+      ExUnit.plural_rule("property", "properties")
     end
   end
 
 
-  defp eqc_propname(string) do
-    String.to_atom("prop_" <> string)
-  end
+  defp eqc_propname(string), do: :"prop_#{string}"
 
   defmacro property(description, do: prop) do
     string = Macro.to_string(prop)
     quote do
       def unquote(eqc_propname(description))(), do: unquote(prop)
+      @tag type: :property
       test unquote("Property " <> description), context do
+        :eqc_random.seed(:os.timestamp) ## rather use real :seed
         counterexample = :eqc.counterexample(transform unquote(prop), context)
         assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
       end
