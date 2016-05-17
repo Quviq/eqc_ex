@@ -90,31 +90,45 @@ defmodule EQC.ExUnit do
   
       end
 
-
   """
 
-  defp eqc_propname(string), do: :"prop_#{string}"
+  # defp eqc_propname(string), do: :"prop_#{string}"
 
-  @doc false
-  defmacro property(description, do: prop) do
-    string = Macro.to_string(prop)
-    quote do
-      def unquote(eqc_propname(description))(), do: unquote(prop)
-        ## here we can add property: PropName to the context, numtests is already in there
-      @tag type: :property
-      test unquote("Property " <> description), context do
-        ## IO.puts "seed #{inspect ExUnit.configuration()}"
-        :eqc_random.seed(:os.timestamp) ## rather use real :seed
-        counterexample = :eqc.counterexample(transform unquote(prop), context)
+  @doc """
+  Defines a property with a string similar to how tests are defined in
+  `ExUnit.Case`.
+
+  ## Examples
+     property "naturals are >= 0" do
+        forall n <- nat do
+          ensure n >= 0
+        end
+     end
+  """
+  defmacro property(message, var \\ [], contents) do
+    prop_ok =
+        case contents do
+          [do: block] ->
+            quote do
+              unquote(block)
+            end
+          _ ->
+            quote do
+              try(unquote(contents))
+            end
+        end
+
+    prop = Macro.escape(prop_ok, unquote: true)
+
+    quote bind_quoted: binding do
+      property = :"property #{message}"
+      string = Macro.to_string(prop)
+      ExUnit.Case.__on_definition__(__ENV__, property, [[type: :property]])
+      def unquote(property)(context) do
+        :eqc_random.seed(:os.timestamp)
+        counterexample = :eqc.counterexample(transform(unquote(prop), context))
         assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
       end
-    end
-  end
-
-  @doc false
-  defmacro property(description) do
-    quote do
-      unquote(eqc_propname(description))()
     end
   end
 
