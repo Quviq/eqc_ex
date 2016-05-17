@@ -1,4 +1,13 @@
 defmodule EQC.StateM do
+  @moduledoc """
+  This module contains macros to be used with [Quviq
+  QuickCheck](http://www.quviq.com). It defines Elixir versions of Erlang
+  functions found in `eqc/include/eqc_statem.hrl`. For detailed documentation of the
+  functions, please refer to the QuickCheck documentation.
+
+  `Copyright (C) Quviq AB, 2014-2016.`
+  """
+  
   defmacro __using__(_opts) do
     quote do
       import :eqc_statem, only: [commands: 1, commands: 2,
@@ -11,31 +20,61 @@ defmodule EQC.StateM do
     end
   end
 
+  @doc """
+  Same as `:eqc_statem.run_commands/2` but returns a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple.
+  """
   def run_commands(mod, cmds) do
     run_commands(mod, cmds, []) end
 
+  @doc """
+  Same as `:eqc_statem.run_commands/3` but returns a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple.
+  """
   def run_commands(mod, cmds, env) do
     {history, state, result} = :eqc_statem.run_commands(mod, cmds, env)
     [history: history, state: state, result: result]
   end
 
+  @doc """
+  Same as `:eqc_statem.run_parallel_commands/2` but returns a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple. Note that there is no
+  actual final state in this case.
+  """
   def run_parallel_commands(mod, cmds) do
     run_parallel_commands(mod, cmds, []) end
 
+  @doc """
+  Same as `:eqc_statem.run_parallel_commands/3` but returns a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple. Note that there is no
+  actual final state in this case.
+  """
   def run_parallel_commands(mod, cmds, env) do
     {history, state, result} = :eqc_statem.run_parallel_commands(mod, cmds, env)
     [history: history, state: state, result: result]
   end
 
+  @doc """
+  Same as `:eqc_statem.pretty_commands/4` but uses a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple.
+  """
   def pretty_commands(mod, cmds, res, bool) do
     :eqc_statem.pretty_commands(mod, cmds,
                                 {res[:history], res[:state], res[:result]},
                                 bool)
   end
 
+  @doc """
+  Same as `:eqc_statem.check_commands/3` but uses a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple.
+  """
   def check_commands(mod, cmds, run_result) do
     check_commands(mod, cmds, run_result, []) end
 
+  @doc """
+  Same as `:eqc_statem.check_commands/4` but uses a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple.
+  """
   def check_commands(mod, cmds, res, env) do
     :eqc_statem.check_commands(mod, cmds,
                                {res[:history], res[:state], res[:result]},
