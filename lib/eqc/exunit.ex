@@ -92,8 +92,6 @@ defmodule EQC.ExUnit do
 
   """
 
-  # defp eqc_propname(string), do: :"prop_#{string}"
-
   @doc """
   Defines a property with a string similar to how tests are defined in
   `ExUnit.Case`.
@@ -105,7 +103,7 @@ defmodule EQC.ExUnit do
         end
      end
   """
-  defmacro property(message, var \\ [], contents) do
+  defmacro property(message, var \\ quote(do: _), contents) do
     prop_ok =
         case contents do
           [do: block] ->
@@ -117,22 +115,24 @@ defmodule EQC.ExUnit do
               try(unquote(contents))
             end
         end
-    
+
+    context = Macro.escape(var)
     prop = Macro.escape(prop_ok, unquote: true)
 
-    quote bind_quoted: binding do
+    quote bind_quoted: [prop: prop, message: message, context: context] do
       string = Macro.to_string(prop)
       property = ExUnit.Case.register_test(__ENV__, :property, message, [])
-      def unquote(property)(context) do
+      def unquote(property)(context = unquote(context)) do
         :eqc_random.seed(:os.timestamp)
-        counterexample = :eqc.counterexample(transform(unquote(prop), context))
+        counterexample = :eqc.counterexample(
+          transform(unquote(prop), context))
         assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
       end
     end
   end
 
   @doc false
-  def transform(prop, opts), do: do_transform(prop, Enum.uniq(opts))
+  def transform(prop, opts), do: do_transform(prop, Enum.to_list(opts))
 
   defp do_transform(prop, []) do
     prop
