@@ -117,13 +117,12 @@ defmodule EQC.ExUnit do
               try(unquote(contents))
             end
         end
-
+    
     prop = Macro.escape(prop_ok, unquote: true)
 
     quote bind_quoted: binding do
-      property = :"property #{message}"
       string = Macro.to_string(prop)
-      ExUnit.Case.__on_definition__(__ENV__, property, [[type: :property]])
+      property = ExUnit.Case.register_test(__ENV__, :property, message, [])
       def unquote(property)(context) do
         :eqc_random.seed(:os.timestamp)
         counterexample = :eqc.counterexample(transform(unquote(prop), context))
