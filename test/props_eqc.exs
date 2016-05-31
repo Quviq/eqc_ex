@@ -6,9 +6,10 @@ defmodule SimpleTests do
 
 
   @tag erlang_counterexample: false
-  property "naturals are >= 0" do
+  @tag zero: 0
+  property "naturals are >= 0", context do
     forall n <- nat do
-      ensure n > 0
+      ensure n > context.zero
     end
   end
 
@@ -35,8 +36,10 @@ defmodule SimpleTests do
     end
   end
 
-  property "reverse strings" do
-    forall s <- utf8 do
+  def string, do: utf8
+  
+  property "reverse strings", context do
+    forall s <- string do
       ensure String.reverse(String.reverse(s)) == s
     end
   end
