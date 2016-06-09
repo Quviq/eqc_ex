@@ -9,16 +9,27 @@ defmodule EQC.Mocking do
 
   `Copyright (C) Quviq AB, 2014-2016.`
 
-  Typical use in Component module definitions
-  require EQC.Mocking
+  ## Example
 
-  def api_spec do
-    EQC.Mocking.api_spec [
-      modules: [
-        EQC.Mocking.api_module name: :mock
-      ]
-    ]
-  end
+  Typical use in Component module definitions
+
+      require EQC.Mocking
+ 
+        def api_spec do
+          EQC.Mocking.api_spec [
+            modules: [
+              EQC.Mocking.api_module name: :mock
+            ]
+          ]
+        end
+
+  ## QuickCheck dependency
+
+  Note that mocking only works with the full version of QuickCheck, not with 
+  QuickCheck Mini. In order to use this module, one has to compile it with QuickCheck installed. 
+  This compilation will then generate the Elixir Records corresponding to 
+  the records defined in the Erlang header files of QuickCheck.  
+
   """
   require Record
 
