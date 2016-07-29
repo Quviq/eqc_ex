@@ -8,9 +8,9 @@ defmodule EQC.Mixfile do
       version: @version,
       elixir: "~> 1.3",
       test_pattern: "*_{test,eqc}.exs",
-      deps: deps,
-      docs: docs,
-      package: package,
+      deps: deps(),
+      docs: docs(),
+      package: package(),
       description: "Wrappers to facilitate using Quviq QuickCheck with Elixir.",
     ]
   end
