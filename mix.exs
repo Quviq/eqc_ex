@@ -31,6 +31,7 @@ defmodule EQC.Mixfile do
   defp package do
     [
       contributors: ["Quviq AB"],
+      maintainers: ["Quviq AB"],
       licenses: ["BSD"],
       files: ["lib", "mix.exs", "LICENSE", "README.md"],
       links: %{"quviq.com" => "http://www.quviq.com"}
