@@ -93,7 +93,7 @@ defmodule EQC.Component.Callouts do
   In Erlang: `?MATCH(Pat, Exp)` or `?MATCH_GEN(Pat, Gen)`.
   """
   defmacro match(e={:=,  _, [_, _]}), do: do_match(e)
-  defmacro match(e={:<-, _, [_, _]}), do: do_match_gen(e)
+  defmacro match({:<-, c, [pat, gen]}), do: do_match_gen({:=, c, [pat, gen]})
   defmacro match(e) do
     _ = e
     syntax_error "match PAT = EXP, or match PAT <- GEN"
@@ -236,7 +236,7 @@ defmodule EQC.Component.Callouts do
 
   In Erlang: `?BLOCK`
   """
-  def block(), do: block(__SELF__)
+  def block(), do: block(__SELF__())
 
   @doc """
   Unblocking a blocked operation.
