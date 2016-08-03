@@ -145,7 +145,6 @@ defmodule EQC.ExUnit do
           if context.registered.check do
             Enum.reduce(context.registered.check, "",
               fn({label, ce}, acc) ->
-                IO.inspect "Checking #{label}"
                 if :eqc.check(unquote(prop), ce) do
                   acc
                 else
