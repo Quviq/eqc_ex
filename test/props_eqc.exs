@@ -13,6 +13,14 @@ defmodule SimpleTests do
     end
   end
 
+  @check minimum_error: [-1], other_error: [-3]
+  property "integers are >= 0" do
+    forall n <- int() do
+      ensure n >= 0
+    end
+  end
+
+
   @tag numtests: 31
   property "implies fine" do
       forall {n,m} <- {int(), nat()} do
