@@ -27,7 +27,8 @@ defmodule EQC.ExUnit do
     quote do
       import EQC.ExUnit
       use EQC
-      
+      ExUnit.Case.register_attribute __ENV__, :check
+
       ExUnit.plural_rule("property", "properties")
     end
   end
@@ -63,6 +64,22 @@ defmodule EQC.ExUnit do
     * `erlang_counterexample:` `false` - Specify whether QuickCheck should output 
        the Erlang term that it gets as a counterexample when a property fails. Default `true`.
 
+  ## Checks
+
+  You may want to test a previously failing case. You can do this by annotating the property
+  with `@check`followed by a list of labelled counter examples.
+
+      defmodule SimpleTests do
+        use ExUnit.Case
+        use EQC.ExUnit
+
+        @check minimum_error: [-1], other_error: [-3]
+        property "integers are >= 0" do
+          forall n <- int do
+            ensure n >= 0
+          end
+        end  
+      end
 
   ## Example 
   In the example below, QuickCheck runs the first propery for max 1 second and the second
@@ -121,13 +138,34 @@ defmodule EQC.ExUnit do
 
     quote bind_quoted: [prop: prop, message: message, context: context] do
       string = Macro.to_string(prop)
-      property = ExUnit.Case.register_test(__ENV__, :property, message, [])
+      property = ExUnit.Case.register_test(__ENV__, :property, message, [:check, :property])
+
       def unquote(property)(context = unquote(context)) do
-        :eqc_random.seed(:os.timestamp)
-        counterexample = :eqc.counterexample(
-          transform(unquote(prop), context))
-        assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample)
+        failures =
+          if context.registered.check do
+            Enum.reduce(context.registered.check, "",
+              fn({label, ce}, acc) ->
+                IO.inspect "Checking #{label}"
+                if :eqc.check(unquote(prop), ce) do
+                  acc
+                else
+                  acc <> "#{label}: " <> Pretty.print(ce)
+                end
+              end)
+          else
+            ""
+          end
+        if :check in ExUnit.configuration()[:include] do
+           assert "" == failures, unquote(string) <> "\nFailed for\n" <> failures
+        else
+          :eqc_random.seed(:os.timestamp)
+          counterexample = :eqc.counterexample(
+            transform(unquote(prop), context))
+          assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample) <> failures
+          assert "" == failures, failures
+        end
       end
+
     end
   end
 
