@@ -64,23 +64,6 @@ defmodule EQC.ExUnit do
     * `erlang_counterexample:` `false` - Specify whether QuickCheck should output 
        the Erlang term that it gets as a counterexample when a property fails. Default `true`.
 
-  ## Checks
-
-  You may want to test a previously failing case. You can do this by annotating the property
-  with `@check`followed by a list of labelled counter examples.
-
-      defmodule SimpleTests do
-        use ExUnit.Case
-        use EQC.ExUnit
-
-        @check minimum_error: [-1], other_error: [-3]
-        property "integers are >= 0" do
-          forall n <- int do
-            ensure n >= 0
-          end
-        end  
-      end
-
   ## Example 
   In the example below, QuickCheck runs the first propery for max 1 second and the second
   property for at least 1 second. This results in 100 tests (the default) or less for the 
@@ -107,6 +90,23 @@ defmodule EQC.ExUnit do
   
       end
 
+  ## Checks
+
+  You may want to test a previously failing case. You can do this by annotating the property
+  with `@check`followed by a list of labelled counter examples.
+
+      defmodule SimpleTests do
+        use ExUnit.Case
+        use EQC.ExUnit
+
+        @check minimum_error: [-1], other_error: [-3]
+        property "integers are >= 0" do
+          forall n <- int do
+            ensure n >= 0
+          end
+        end  
+      end
+
   """
 
   @doc """
@@ -114,11 +114,11 @@ defmodule EQC.ExUnit do
   `ExUnit.Case`.
 
   ## Examples
-     property "naturals are >= 0" do
+      property "naturals are >= 0" do
         forall n <- nat do
           ensure n >= 0
         end
-     end
+      end
   """
   defmacro property(message, var \\ quote(do: _), contents) do
     prop_ok =
