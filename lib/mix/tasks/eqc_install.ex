@@ -7,6 +7,8 @@ defmodule Mix.Tasks.Eqc.Install do
   A Mix task for installing QuickCheck as a local archive. Note that you need a QuickCheck licence to be able to run the full version of QuickCheck (mailto: support@quviq.com to purchase one).
   QuickCheck Mini is Quviq's free version of QuickCheck.
 
+  We do not follow the strict local archive rules and also create `include` and some other directories needed to make QuickCheck work well. One can uninstall with `mix archive.uninstall` for each created archive.
+
   ## Options
 
       * `--mini` - Install QuickCheck Mini. Default is to install full version.
@@ -22,7 +24,6 @@ defmodule Mix.Tasks.Eqc.Install do
 
   @spec run(OptionParser.argv) :: boolean
   def run(argv) do
-    IO.inspect argv
     {opts, _, _} = OptionParser.parse(argv, switches: @switches)
     version = if opts[:version] do
                 "-" <> opts[:version]
@@ -45,6 +46,7 @@ defmodule Mix.Tasks.Eqc.Install do
         dir_dst = Path.join(Mix.Local.path_for(:archive), dst)
         File.mkdir_p!(dir_dst)
         {:ok, files} = :zip.extract(binary, [cwd: dir_dst])
+        Mix.shell.info( [:green, "* stored #{Enum.count(files)} files in ", :reset, dir_dst ])
         eqc_version =
           Enum.reduce(files, nil, 
                       fn(f, acc) ->
@@ -52,15 +54,21 @@ defmodule Mix.Tasks.Eqc.Install do
                       end)
         if eqc_version do
           archives = if opts[:mini] do
-                       [ Path.join(eqc_version["prefix"], "eqc-#{eqc_version["version"]}") ]
+                       [ {eqc_version["prefix"], "eqc-#{eqc_version["version"]}"} ]
                      else
-                       [ Path.join(eqc_version["prefix"], "eqc-#{eqc_version["version"]}"),
-                         Path.join(eqc_version["prefix"], "pulse-#{eqc_version["version"]}"),
-                         Path.join(eqc_version["prefix"], "pulse_otp-#{eqc_version["version"]}") ]
+                       [ {eqc_version["prefix"], "eqc-#{eqc_version["version"]}"},
+                         {eqc_version["prefix"], "pulse-#{eqc_version["version"]}"},
+                         {eqc_version["prefix"], "pulse_otp-#{eqc_version["version"]}"} ]
                      end
-          build_archives(archives)  
+          build_archives(archives)
+          # now need to recompile eqc_ex file getting record from include
+          Mix.shell.info( [:green, "* deleted downloaded ", :reset, dir_dst ])
+          File.rm_rf!(dir_dst)
+          Mix.shell.info [:yellow, "Please recompile eqc_ex", :reset]
         else
-          Mix.shell.info [:red, "Error! Failed to find eqc in downloaded zip", :reset]
+          Mix.raise """
+            Error! Failed to find eqc in downloaded zip
+            """
         end
                                       
                                         
@@ -81,13 +89,23 @@ defmodule Mix.Tasks.Eqc.Install do
   end
 
   defp build_archives(archives) do
-    Mix.shell.info [:green, "* creating archive(s)", :reset]
-
-    for a<-archives, do: Mix.Tasks.Archive.Build.run(["--no-compile", "--input", a, "--output", a<>".ez"])
-
-    for a<-archives do
+    for {prefix, a}<-archives do
       Mix.shell.info [:green, "* installing archive ", :reset, a]
-      Mix.Tasks.Archive.Install.run([a<>".ez"])
+      dst = Path.join(Mix.Local.path_for(:archive), a)
+      case File.mkdir(dst) do
+        :ok ->
+          File.cp_r!(Path.join(prefix, a), Path.join(dst, a))
+        {:error, :eexist} ->
+          Mix.raise """
+            Could not overwrite existing directory #{dst}
+            Uninstall older version of QuickCheck first 
+            """
+        {:error, posix} ->
+          Mix.raise """
+            Could not create directory #{dst}
+            Error: #{posix}
+            """
+      end
     end
     
   end
