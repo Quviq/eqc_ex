@@ -7,7 +7,8 @@ defmodule Mix.Tasks.Eqc.Install do
   A Mix task for installing QuickCheck as a local archive. Note that you need a QuickCheck licence to be able to run the full version of QuickCheck (mailto: support@quviq.com to purchase one).
   QuickCheck Mini is Quviq's free version of QuickCheck.
 
-  We do not follow the strict local archive rules and also create `include` and some other directories needed to make QuickCheck work well. One can uninstall with `mix archive.uninstall` for each created archive.
+  We do not follow the strict local archive rules and also create `include` and some other directories needed to make QuickCheck work well. But, one can uninstall with `mix archive.uninstall` for each created archive.
+  Alternatively, one can uninstall QuickCheck with `mix eqc.uninstall`.
 
   ## Options
 
