@@ -12,8 +12,8 @@ defmodule Mix.Tasks.Eqc.Install do
 
   ## Options
 
-      * `--mini` - Install QuickCheck Mini. Default is to install full version.
-      * `--version version` - Provide version number for specific QuickCheck to install
+     * `--mini` - Install QuickCheck Mini. Default is to install full version.
+     * `--version` - Provide version number for specific QuickCheck to install
 
   ## Examples
 

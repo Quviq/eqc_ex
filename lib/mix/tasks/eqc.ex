@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Eqc do
   @shortdoc "Test QuickCheck properties"
 
   @moduledoc """
-  A Mix task for running QuickCheck properties. At the moment, this basically calls `mix test with the given options. 
+  A Mix task for running QuickCheck properties. At the moment, this basically calls `mix test` with the given options. 
 
   ## Options
 
