@@ -62,10 +62,12 @@ defmodule Mix.Tasks.Eqc.Install do
                          {eqc_version["prefix"], "pulse_otp-#{eqc_version["version"]}"} ]
                      end
           build_archives(archives)
-          # now need to recompile eqc_ex file getting record from include
+          
           Mix.shell.info( [:green, "* deleted downloaded ", :reset, dir_dst ])
           File.rm_rf!(dir_dst)
-          Mix.shell.info [:yellow, "Please recompile eqc_ex", :reset]
+          
+          # touch eqc_ex part that depends on QuickCheck version to force recompilation
+          File.touch(List.to_string((Elixir.EQC.Mocking.module_info())[:compile][:source]))
         else
           Mix.raise """
             Error! Failed to find eqc in downloaded zip
