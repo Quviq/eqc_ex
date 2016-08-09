@@ -412,50 +412,99 @@ defmodule EQC do
 
   defp syntax_error(err), do: raise(ArgumentError, "Usage: " <> err)
 
+  @doc false
+  defmacro collect(xs) do
+    case Enum.reverse(xs) do
+      [ {:in, prop} | tail] ->
+        # for backward compatibility
+        do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, tail, prop)
+      [ {:do, prop} | tail ] ->
+        do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, tail, prop)
+      _ ->
+        syntax_error "collect KEYWORDLIST, do: PROP"
+    end
+  end
+
   @doc """
   A property combinator to obtain test statistics
 
   Usage:
-     collect KeywordList, in: prop
+       collect KeywordList do 
+         prop
+       end
 
   Example:
       forall {m, n} <- {int, int} do
-        collect m: m, n: n,
-        in:
+        collect m: m, n: n do
             length(Enum.to_list(m .. n)) == abs(n - m) + 1
+        end
       end
   """
-  defmacro collect(xs) do
+  defmacro collect(xs, do: prop) when prop != nil do
+    do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, Enum.reverse(xs), prop)
+  end
+  defmacro collect(_, prop) do
+    _ = prop
+    syntax_error "collect KEYWORDLIST, do: PROP"
+  end
+
+  @doc false
+  defmacro measure(xs) do
     case Enum.reverse(xs) do
-      [ {:in, prop} | tail] ->
-        do_collect(tail, prop)
+      [ {:do, prop} | tail ] ->
+        do_nested(quote do (fn(t, v, p) -> :eqc.measure(t, v, p) end) end, tail, prop)
       _ ->
-        syntax_error "collect KEYWORDLIST, in: PROP"
+        syntax_error "measure KEYWORDLIST, do: PROP"
     end
   end
 
-  defp do_collect([{tag, {:in, _, [count,requirement]}} | t], acc) do
-    acc = quote do: :eqc.collect(
-          fn res ->
-            case (unquote(requirement) -- Keyword.keys(res)) do
-              [] -> :ok
-              uncovered ->
-                :eqc.format("Warning: not all features covered! ~p\n",[uncovered])
-            end
-            :eqc.with_title(unquote(tag)).(res)
-          end, unquote(count), unquote(acc))
-    do_collect(t, acc)
+  @doc """
+  A property combinator to obtain test statistics for numbers
+
+  Usage:
+       measure KeywordList do 
+         prop
+       end
+
+  Example:
+      forall {m, n} <- {int, int} do
+        measure m: m, n: n do
+            length(Enum.to_list(m .. n)) == abs(n - m) + 1
+        end
+      end
+  """
+  defmacro measure(xs, do: prop) when prop != nil do
+    do_nested(quote do (fn(t, v, p) -> :eqc.measure(t, v, p) end) end, Enum.reverse(xs), prop)
   end
-  defp do_collect([{tag, term} | t], acc) do
-    acc = quote do: :eqc.collect(:eqc.with_title(unquote(tag)), unquote(term), unquote(acc))
-    do_collect(t, acc)
+  defmacro measure(_, prop) do
+    _ = prop
+    syntax_error "measure KEYWORDLIST, do: PROP"
   end
-  defp do_collect([], acc) do acc
+
+
+#  defp do_nested(f, [{tag, {:in, _, [count,requirement]}} | t], acc) do
+#    acc = quote do: unquote(f).(
+#          fn res ->
+#            case (unquote(requirement) -- Keyword.keys(res)) do
+#              [] -> :ok
+#              uncovered ->
+#                :eqc.format("Warning: not all features covered! ~p\n",[uncovered])
+#            end
+#            :eqc.with_title(unquote(tag)).(res)
+#          end, unquote(count), unquote(acc))
+#    do_nested(f, t, acc)
+#  end
+  defp do_nested(f, [{tag, term} | t], acc) do
+    acc = quote do: unquote(f).(unquote(tag), unquote(term), unquote(acc))
+    do_nested(f, t, acc)
   end
+  defp do_nested(_, [], acc) do acc
+  end
+  
   
   ## probably put somewhere else EQC-Suite for example?
   def feature(term, prop) do
-    :eqc.collect( term, :eqc.features([term], prop))
+    :eqc.collect(term, :eqc.features([term], prop))
   end
 
   @doc """
