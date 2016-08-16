@@ -29,6 +29,13 @@ defmodule SimpleTests do
     end
   end
 
+  property "measure" do
+    forall {n,m} <- {int(), nat()} do
+      measure m: m, n: n, do:
+        true
+    end
+  end
+
   @tag min_time: 2000 
   property "min testing_time" do
     forall _min <- int() do

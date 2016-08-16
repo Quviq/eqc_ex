@@ -35,7 +35,9 @@ defmodule StringTests do
     end
   end
 
-  @tag numtests: 100000
+  @tag numtests: 1000
+  @check error1: [{"","","0"}],
+         error2: [{"","12","0"}]
   property "replace one prefix occurrences of string" do
     forall {ls, rs, s}  <- {string(), string(), string()} do
         string = ls <> s
@@ -43,6 +45,5 @@ defmodule StringTests do
         ensure String.replace_prefix(string, ls, rs) == replaced
     end
   end
-  
 
 end
