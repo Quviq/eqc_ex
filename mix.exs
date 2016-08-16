@@ -34,7 +34,10 @@ defmodule EQC.Mixfile do
       maintainers: ["Quviq AB"],
       licenses: ["BSD"],
       files: ["lib", "mix.exs", "LICENSE", "README.md"],
-      links: %{"quviq.com" => "http://www.quviq.com"}
+      links: %{
+        "quviq.com" => "http://www.quviq.com",
+        "Github" => "https://github.com/Quviq/eqc_ex"
+      }
     ]
   end
 
