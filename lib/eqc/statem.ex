@@ -12,7 +12,9 @@ defmodule EQC.StateM do
     quote do
       import :eqc_statem, only: [commands: 1, commands: 2,
                                  parallel_commands: 1, parallel_commands: 2,
-                                 eq: 2, command_names: 1, more_commands: 2]
+                                 eq: 2, # use EQC.satisfy instead
+                                 more_commands: 2,
+                                 commands_length: 1]
       import EQC.StateM
 
       @file "eqc_statem.hrl"
@@ -103,6 +105,16 @@ defmodule EQC.StateM do
         end ]
   end
 
+  @doc """
+  Same as `:eqc_statem.command_names/1` but replaces the module name to Elixir style.
+  """
+  def command_names(cmds) do
+    for {m, f, as} <- :eqc_statem.command_names(cmds) do
+      {String.to_atom(Enum.join(Module.split(m), ".")), f, as}
+    end
+  end
+
+  
   @doc """
   Converts the given call expression into a symbolic call.
 
