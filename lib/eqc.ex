@@ -547,7 +547,13 @@ In Erlang eq(t1, t2).
     quote do
       uleft  = unquote(left)
       uright = unquote(right)
-      unquote(operator)(uleft, uright) || 'violated #{inspect(uleft)} #{unquote(operator)} #{inspect(uright)}'
+      unquote(operator)(uleft, uright) || 'not satisfied #{inspect(uleft)} #{unquote(operator)} #{inspect(uright)}'
+    end
+  end
+  defmacro satisfy(expr) do
+    quote  bind_quoted: [expr: expr, escaped: Macro.escape(expr)] do
+      string = Macro.to_string(escaped)
+      expr == true || 'not satisfied #{string} by #{inspect(expr)}'
     end
   end
 
