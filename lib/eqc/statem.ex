@@ -61,9 +61,10 @@ defmodule EQC.StateM do
   `:history`, `:state`, and `:result` instead of a tuple.
   """
   def pretty_commands(mod, cmds, res, bool) do
+    :eqc_gen.with_parameter(:elixir, :true,
     :eqc_statem.pretty_commands(mod, cmds,
                                 {res[:history], res[:state], res[:result]},
-                                bool)
+                                bool))
   end
 
   @doc """
@@ -78,9 +79,10 @@ defmodule EQC.StateM do
   `:history`, `:state`, and `:result` instead of a tuple.
   """
   def check_commands(mod, cmds, res, env) do
+    :eqc_gen.with_parameter(:elixir, :true,
     :eqc_statem.check_commands(mod, cmds,
                                {res[:history], res[:state], res[:result]},
-                               env)
+                               env))
   end
 
   @doc """
