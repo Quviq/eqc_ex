@@ -161,7 +161,7 @@ defmodule EQC.ExUnit do
           counterexample = :eqc.counterexample(
             transform(unquote(prop), context))
           assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample) <> failures
-          assert "" == failures, failures
+          assert "" == failures, unquote(string) <> "\nFailed for\n" <> failures
         end
       end
 
