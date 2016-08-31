@@ -18,6 +18,10 @@ defmodule EQC do
     end
   end
 
+  defp syntax_error(err) do
+    raise ArgumentError, message: "Usage: " <> err
+  end
+  
   defp eqc_forall(x, g, prop) do
     quote(do: :eqc.forall(unquote(g), fn unquote(x) -> unquote(prop) end))
   end
@@ -410,7 +414,6 @@ defmodule EQC do
     syntax_error "once_only do: PROP"
   end
 
-  defp syntax_error(err), do: raise(ArgumentError, "Usage: " <> err)
 
   @doc """
   A property combinator to obtain test statistics
@@ -549,6 +552,45 @@ defmodule EQC do
     :eqc.collect(term, :eqc.features([term], prop))
   end
 
+  @doc """
+  Wraps an expression that may raise an exception such that if the exception 
+  is of the expected error kind, this error is returned as a value, not raised
+  as an exception.
+
+  It only catches the expected error
+  
+  Usage:
+       resist ArithmeticError do 
+         div(4, 0)
+       end
+
+ 
+  """
+  defmacro resist(error, do: cmd) do
+    quote do
+      try do
+        unquote(cmd)
+      rescue
+        e in unquote(error) -> unquote(error)
+      end
+    end
+  end
+  
+  @doc false
+  ## I want to only return the name of the error??
+  defmacro resist(cmd) do
+    quote do
+      try do
+        unquote(cmd)
+      rescue
+        e -> e
+      end
+    end
+  end
+
+
+
+  
   @doc """
 A property checking an operation and prints when relation is violated.
 In postconditions, one uses satisfy instead.
