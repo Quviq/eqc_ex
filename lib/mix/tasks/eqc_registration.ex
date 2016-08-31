@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Eqc.Registration do
 
   ## Examples
 
-      mix eqc.register MyRegistrationID
+      mix eqc.registration MyRegistrationID
 
   """
 
