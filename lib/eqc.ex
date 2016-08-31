@@ -412,19 +412,6 @@ defmodule EQC do
 
   defp syntax_error(err), do: raise(ArgumentError, "Usage: " <> err)
 
-  @doc false
-  defmacro collect(xs) do
-    case Enum.reverse(xs) do
-      [ {:in, prop} | tail] ->
-        # for backward compatibility
-        do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, tail, prop)
-      [ {:do, prop} | tail ] ->
-        do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, tail, prop)
-      _ ->
-        syntax_error "collect KEYWORDLIST, do: PROP"
-    end
-  end
-
   @doc """
   A property combinator to obtain test statistics
 
@@ -440,23 +427,33 @@ defmodule EQC do
         end
       end
   """
+  ## This is the collect ... do PROP end
   defmacro collect(xs, do: prop) when prop != nil do
-    do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, Enum.reverse(xs), prop)
+    if Keyword.keyword?(xs) do
+      do_nested(quote do (fn(wt, t, p) -> :eqc.collect(:eqc.with_title(wt), t, p) end) end, Enum.reverse(xs), prop)
+    else
+      syntax_error "collect KEYWORDLIST do PROP end"
+    end
   end
   defmacro collect(_, prop) do
     _ = prop
-    syntax_error "collect KEYWORDLIST, do: PROP"
+    syntax_error "collect KEYWORDLIST do PROP end"
   end
 
   @doc false
-  defmacro measure(xs) do
+  ## This takes care of collect(..., do: PROP)
+  defmacro collect(xs) when is_list(xs) do
     case Enum.reverse(xs) do
+      [ {:in, prop} | tail] ->
+        # for backward compatibility
+        quote do collect(unquote(Enum.reverse(tail)), do: unquote(prop)) end 
       [ {:do, prop} | tail ] ->
-        do_nested(quote do (fn(t, v, p) -> :eqc.measure(t, v, p) end) end, tail, prop)
+        quote do collect(unquote(Enum.reverse(tail)), do: unquote(prop)) end 
       _ ->
-        syntax_error "measure KEYWORDLIST, do: PROP"
+        syntax_error "collect(KEYWORDLIST, do: PROP)"
     end
   end
+  
 
   @doc """
   A property combinator to obtain test statistics for numbers
@@ -474,14 +471,59 @@ defmodule EQC do
       end
   """
   defmacro measure(xs, do: prop) when prop != nil do
-    do_nested(quote do (fn(t, v, p) -> :eqc.measure(t, v, p) end) end, Enum.reverse(xs), prop)
+    if Keyword.keyword?(xs) do
+      do_nested(quote do (fn(t, v, p) -> :eqc.measure(t, v, p) end) end, Enum.reverse(xs), prop)
+    else
+      syntax_error "measure KEYWORDLIST do PROP end"
+    end
   end
   defmacro measure(_, prop) do
     _ = prop
-    syntax_error "measure KEYWORDLIST, do: PROP"
+    syntax_error "measure KEYWORDLIST do PROP end"
+  end
+  @doc false
+
+  defmacro measure(xs) do
+    try do
+      [ {:do, prop} | tail ] = Enum.reverse(xs)
+      quote do measure(unquote(Enum.reverse(tail)), do: unquote(prop)) end 
+    rescue
+      _ -> syntax_error "measure KEYWORDLIST do PROP end"
+    end
   end
 
+  @doc """
+  A property combinator to obtain test statistics for sequences
 
+  Usage:
+       aggregate KeywordList do 
+         prop
+       end
+
+  """
+  defmacro aggregate(xs, do: prop) when prop != nil do
+    if Keyword.keyword?(xs) do
+      do_nested(quote do (fn(t, v, p) -> :eqc.aggregate(:eqc.with_title(t), v, p) end) end, Enum.reverse(xs), prop)
+    else                                                                         
+      syntax_error "aggregate KEYWORDLIST do PROP end"
+    end
+  end
+  defmacro aggregate(_, prop) do
+    _ = prop
+    syntax_error "aggregate KEYWORDLIST do PROP end"
+  end
+
+  @doc false
+  defmacro aggregate(xs) when is_list(xs) do
+    try do
+      [ {:do, prop} | tail ] = Enum.reverse(xs)
+      quote do aggregate(unquote(Enum.reverse(tail)), do: unquote(prop)) end 
+    rescue
+      _ -> syntax_error "aggregate(KEYWORDLIST, do: PROP)"
+    end
+  end
+
+  
 #  defp do_nested(f, [{tag, {:in, _, [count,requirement]}} | t], acc) do
 #    acc = quote do: unquote(f).(
 #          fn res ->
@@ -495,8 +537,8 @@ defmodule EQC do
 #    do_nested(f, t, acc)
 #  end
   defp do_nested(f, [{tag, term} | t], acc) do
-    acc = quote do: unquote(f).(unquote(tag), unquote(term), unquote(acc))
-    do_nested(f, t, acc)
+    ( acc = quote do: unquote(f).(unquote(tag), unquote(term), unquote(acc))
+      do_nested(f, t, acc) )
   end
   defp do_nested(_, [], acc) do acc
   end
