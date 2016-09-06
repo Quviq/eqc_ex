@@ -557,16 +557,22 @@ defmodule EQC do
   is of the expected error kind, this error is returned as a value, not raised
   as an exception.
 
-  It only catches the expected error
+  It only catches the expected error, or all errors if none is specified.
   
   Usage:
-       resist ArithmeticError do 
-         div(4, 0)
-       end
+       resist ArithmeticError, div(4, 0)
+       > ArithmeticError
+ 
+       resist ArgumentError, div(4,0)
+       ** (ArithmeticError) bad argument in arithmetic expression
+    
+       resist div(4,0)
+       > ArithmeticError
+
 
  
   """
-  defmacro resist(error, do: cmd) do
+  defmacro resist(error, cmd) do
     quote do
       try do
         unquote(cmd)
@@ -577,13 +583,12 @@ defmodule EQC do
   end
   
   @doc false
-  ## I want to only return the name of the error??
   defmacro resist(cmd) do
     quote do
       try do
         unquote(cmd)
       rescue
-        e -> e
+        e -> if is_map(e), do: e.__struct__, else: e
       end
     end
   end
