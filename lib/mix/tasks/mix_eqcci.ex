@@ -73,13 +73,13 @@ defmodule Mix.Tasks.EqcCI do
            |> filter_only_opts()
 
     default_opts(opts) ++
-      Dict.take(opts, [:trace, :max_cases, :include, :exclude, :seed, :timeout])
+      Keyword.take(opts, [:trace, :max_cases, :include, :exclude, :seed, :timeout])
   end
 
   defp default_opts(opts) do
     # Set autorun to false because Mix
     # automatically runs the test suite for us.
-    case Dict.get(opts, :color) do
+    case Keyword.get(opts, :color) do
       nil -> [autorun: false]
       enabled? -> [autorun: false, colors: [enabled: enabled?]]
     end
