@@ -139,4 +139,57 @@ defmodule EQC.StateM do
       {:call, __MODULE__, unquote(fun), unquote(args)}
     end
   end
+  
+  defp replace_var([], binding, seq) do
+    {Enum.reverse(seq), binding}
+  end
+  defp replace_var([{:=, _, [{var, _, _}, {{:., _, [mod, fun]}, _, args}]} | cmds], binding, seq) do
+    freshvar = {:var, length(seq) + 1}
+    {callargs, _} = Code.eval_quoted(args, binding, __ENV__)
+    symbcmd = quote do {:set, unquote(freshvar),
+                        {:call, unquote(mod), unquote(fun), unquote(callargs)}} end
+    replace_var(cmds, [{var, freshvar}|binding], [symbcmd|seq])
+  end
+  defp replace_var([{{:., _, [mod, fun]}, _, args} | cmds], binding, seq) do
+    freshvar = {:var, length(seq) + 1}
+    {callargs, _} = Code.eval_quoted(args, binding, __ENV__)
+    symbcmd = quote do {:set, unquote(freshvar),
+                        {:call, unquote(mod), unquote(fun), unquote(callargs)}} end
+    replace_var(cmds, binding, [symbcmd|seq])
+  end
+  defp replace_var([{:=, _, [{var, _, _}, {fun, _, args}]} | cmds], binding, seq) do
+    freshvar = {:var, length(seq) + 1}
+    {callargs, _} = Code.eval_quoted(args, binding, __ENV__)
+    symbcmd = quote do {:set, unquote(freshvar),
+                        {:call, Macro.escape(__MODULE__), unquote(fun), unquote(callargs)}} end
+    replace_var(cmds, [{var, freshvar}|binding], [symbcmd|seq])
+  end
+   defp replace_var([{fun, _, args} | cmds], binding, seq) when is_atom(fun) do
+    freshvar = {:var, length(seq) + 1}
+    {callargs, _} = Code.eval_quoted(args, binding, __ENV__)
+    symbcmd = quote do {:set, unquote(freshvar),
+                        {:call, Macro.escape(__MODULE__), unquote(fun), unquote(callargs)}} end
+    replace_var(cmds, binding, [symbcmd|seq])
+  end
+
+    
+
+
+  defmacro eqc_test([do: cmds]) do
+    commands = case cmds do
+                 {:__block__, _, block} -> block
+                 nil -> []
+                 cmd -> [cmd]
+               end
+    {new_commands, binding} =
+      replace_var(commands, [], [])
+    quote do
+      unquote(new_commands)
+    end
+  end
+    
+    
+    
+
+  
 end
