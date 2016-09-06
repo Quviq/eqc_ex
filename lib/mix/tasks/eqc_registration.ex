@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Eqc.Registration do
             Use mix eqc.install to install QuickCheck
           """
         else
-          unless :eqc.start() == :ok, do: :eqc.registration(key)
+          :eqc.registration(to_char_list key)
         end
       [] ->
         Mix.raise """
