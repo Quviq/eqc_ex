@@ -181,7 +181,7 @@ defmodule EQC.StateM do
                  nil -> []
                  cmd -> [cmd]
                end
-    {new_commands, binding} =
+    {new_commands, _binding} =
       replace_var(commands, [], [])
     quote do
       unquote(new_commands)
