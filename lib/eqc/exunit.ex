@@ -145,7 +145,7 @@ defmodule EQC.ExUnit do
           if context.registered.check do
             Enum.reduce(context.registered.check, "",
               fn({label, ce}, acc) ->
-                if :eqc.check(unquote(prop), ce) do
+                if :eqc.check(transform(unquote(prop), context), ce) do
                   acc
                 else
                   acc <> "#{label}: " <> Pretty.print(ce)
