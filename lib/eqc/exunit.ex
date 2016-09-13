@@ -186,6 +186,13 @@ defmodule EQC.ExUnit do
   defp do_transform(prop, [{:erlang_counterexample, b} | opts]) do
     do_transform(:eqc_gen.with_parameter(:print_counterexample, b, prop), opts)
   end
+  defp do_transform(prop, [{:show_states, b} | opts]) do
+    if b do
+      do_transform(:eqc_statem.show_states(prop), opts)
+    else
+      do_transform(prop, opts)
+    end
+  end
   defp do_transform(prop, [_ | opts]) do
     do_transform(prop, opts)
   end
