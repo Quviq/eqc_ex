@@ -553,6 +553,28 @@ defmodule EQC do
   end
 
   @doc """
+  Property combinator that is true if all components are true. The tags are used to report the counterexample.
+
+  ## Example
+      property "Sort" do
+        forall l <- list(int()) do
+          sorted = sort(l)
+          conjunction in_order: in_order?(sorted),
+                      same_element: same_elements(l, sorted),
+                      same_length: ensure length(l) == length(sorted)
+        end
+      end
+
+
+  """
+  def conjunction(kvlist) do
+    try do :eqc.conjunction(kvlist)
+    rescue e in UndefinedFunctionError ->
+        raise UndefinedFunctionError, reason: "Your QuickCheck does not support conjunction"
+    end
+  end
+  
+  @doc """
   Wraps an expression that may raise an exception such that if the exception 
   is of the expected error kind, this error is returned as a value, not raised
   as an exception.
