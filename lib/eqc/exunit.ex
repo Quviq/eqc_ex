@@ -184,7 +184,11 @@ defmodule EQC.ExUnit do
     do_transform(:eqc.with_testing_time_unit(1, :eqc.testing_time({:max, ms}, prop)), opts)
   end
   defp do_transform(prop, [{:erlang_counterexample, b} | opts]) do
-    do_transform(:eqc_gen.with_parameter(:print_counterexample, b, prop), opts)
+    if !b do
+      do_transform(:eqc.dont_print_counterexample(prop), opts)
+    else
+      do_transform(prop, opts)
+    end
   end
   defp do_transform(prop, [{:show_states, b} | opts]) do
     if b do
