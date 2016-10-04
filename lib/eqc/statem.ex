@@ -103,7 +103,7 @@ defmodule EQC.StateM do
       end
     end ++
       [ quote do
-          def weight(unquote(state), _) do 1 end
+          def weight(_, _) do 1 end
         end ]
   end
 
