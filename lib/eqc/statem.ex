@@ -12,7 +12,6 @@ defmodule EQC.StateM do
     quote do
       import :eqc_statem, only: [commands: 1, commands: 2,
                                  parallel_commands: 1, parallel_commands: 2,
-                                 eq: 2, # use EQC.satisfy instead
                                  more_commands: 2,
                                  commands_length: 1]
       import EQC.StateM
