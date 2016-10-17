@@ -17,12 +17,28 @@ defmodule Mix.Tasks.Eqc do
       mix eqc
 
   """
-  @switches [only_properties: :boolean]
+  @switches [ numtests: :integer,
+              morebugs: :boolean
+            ]
 
   def run(argv) do
-    # {opts, argv, _} = OptionParser.parse(argv, switches: @switches)
+    {opts, files} = OptionParser.parse!(argv, switches: @switches)
+
+    opts_to_env(opts)    
+
+    test_opts = Enum.filter(opts, fn({k,_}) -> not k in Keyword.keys(@switches) end)
+    new_argv = OptionParser.to_argv([max_cases: 1] ++ test_opts) ++ files
+    
     Mix.env(:test)
-    Mix.Task.run(:test, argv)
+    Mix.Task.run(:test, new_argv)
   end
 
+  defp opts_to_env(opts) do
+    for key <- Keyword.keys(@switches) do
+      if opts[key] != nil do
+        Application.put_env(:eqc, key, opts[key], [])
+      end
+    end
+  end
+  
 end
