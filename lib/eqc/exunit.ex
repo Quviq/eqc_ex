@@ -156,27 +156,36 @@ defmodule EQC.ExUnit do
                                            [:check, :property] ++ env_flags)
 
       def unquote(property)(context = unquote(context)) do
-        failures =
-          if context.registered.check do
-            Enum.reduce(context.registered.check, "",
-              fn({label, ce}, acc) ->
-                if :eqc.check(transform(unquote(prop), context), ce) do
-                  acc
-                else
-                  acc <> "#{label}: " <> Pretty.print(ce)
-                end
-              end)
-          else
-            ""
-          end
-        if :check in ExUnit.configuration()[:include] do
-           assert "" == failures, unquote(string) <> "\nFailed for\n" <> failures
-        else
-          :eqc_random.seed(:os.timestamp)
-          counterexample = :eqc.counterexample(
-            transform(unquote(prop), context))
-          assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample) <> failures
-          assert "" == failures, unquote(string) <> "\nFailed for\n" <> failures
+
+        transformed_prop = transform(unquote(prop), context)
+                
+        case {Map.get(context, :morebugs), Map.get(context, :eqc_callback)} do
+          {true, callback} when callback != nil ->
+            suite = callback.more_bugs(__MODULE__, transformed_prop)  # This is indeed the module in which macro is expanded!
+            assert {:feature_based, []} == suite
+          _ ->
+            failures =
+            if context.registered.check do
+              Enum.reduce(context.registered.check, "",
+                fn({label, ce}, acc) ->
+                  if :eqc.check(transformed_prop, ce) do
+                    acc
+                  else
+                    acc <> "#{label}: " <> Pretty.print(ce)
+                  end
+                end)
+            else
+              ""
+            end
+            if :check in ExUnit.configuration()[:include] do
+              assert "" == failures, unquote(string) <> "\nFailed for\n" <> failures
+            else
+              :eqc_random.seed(:os.timestamp)
+              
+              counterexample = :eqc.counterexample(transformed_prop)
+              assert true == counterexample, unquote(string) <> "\nFailed for " <> Pretty.print(counterexample) <> failures
+              assert "" == failures, unquote(string) <> "\nFailed for\n" <> failures
+            end
         end
       end
 
