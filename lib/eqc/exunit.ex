@@ -138,7 +138,22 @@ defmodule EQC.ExUnit do
 
     quote bind_quoted: [prop: prop, message: message, context: context] do
       string = Macro.to_string(prop)
-      property = ExUnit.Case.register_test(__ENV__, :property, message, [:check, :property])
+
+      ## `mix eqc` options overwrite module tags
+      env_flags =
+        Enum.reduce([:numtests, :morebugs],
+                    [],
+          fn(key, acc) ->
+            value = Application.get_env(:eqc, key) 
+            if value == nil do
+              acc
+            else
+              [[{key, value}]|acc]
+            end
+          end)
+      
+      property = ExUnit.Case.register_test(__ENV__, :property, message,
+                                           [:check, :property] ++ env_flags)
 
       def unquote(property)(context = unquote(context)) do
         failures =
