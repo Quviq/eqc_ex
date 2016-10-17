@@ -10,7 +10,9 @@ defmodule Mix.Tasks.Eqc do
 
     * `--only property` - Default is to run all tests, also ExUnit tests,
       but this flag picks only the properties to run
-    * `--only check` - Runs specific test cases annotated by @check and does not generate new QuickCheck values for properties. 
+    * `--only check` - Runs specific test cases annotated by @check and does not generate new QuickCheck values for properties.
+    * `--numtests n` - Runs `n` tests for each property.
+    * `--morebugs` - Activates more_bugs where appropriate. 
 
   ## Examples
 

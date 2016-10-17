@@ -63,6 +63,7 @@ defmodule EQC.ExUnit do
     * `timeout:` `t` - Inherited from ExUnit and fails if property takes more than `t` milliseconds.
     * `erlang_counterexample:` `false` - Specify whether QuickCheck should output 
        the Erlang term that it gets as a counterexample when a property fails. Default `true`.
+    * `morebugs:` `b` - Runs more_bugs is `b`
 
   ## Example 
   In the example below, QuickCheck runs the first propery for max 1 second and the second
