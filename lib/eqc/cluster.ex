@@ -18,6 +18,8 @@ defmodule EQC.Cluster do
       import :eqc_mocking, only: [start_mocking: 2, stop_mocking: 0]
 
       import EQC.Cluster
+      @tag eqc_callback: :eqc_cluster
+      
     end
   end
 

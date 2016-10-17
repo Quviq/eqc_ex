@@ -18,6 +18,8 @@ defmodule EQC.StateM do
 
       @file "eqc_statem.hrl"
       @compile {:parse_transform, :eqc_group_commands}
+      @tag eqc_callback: :eqc_statem
+      
     end
   end
 

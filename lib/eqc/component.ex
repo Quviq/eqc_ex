@@ -20,6 +20,7 @@ defmodule EQC.Component do
       @file "eqc_component.hrl"
       @compile {:parse_transform, :eqc_group_commands}
       @compile {:parse_transform, :eqc_transform_callouts}
+      @tag eqc_callback: :eqc_component
     end
   end
 
