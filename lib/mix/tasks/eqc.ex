@@ -13,6 +13,8 @@ defmodule Mix.Tasks.Eqc do
     * `--only check` - Runs specific test cases annotated by @check and does not generate new QuickCheck values for properties.
     * `--numtests n` - Runs `n` tests for each property.
     * `--morebugs` - Activates more_bugs where appropriate. 
+    * `--showstates` - Show intermediate states in failing State Machine properties. 
+
 
   ## Examples
 
@@ -20,7 +22,8 @@ defmodule Mix.Tasks.Eqc do
 
   """
   @switches [ numtests: :integer,
-              morebugs: :boolean
+              morebugs: :boolean,
+              showstates: :boolean
             ]
 
   def run(argv) do

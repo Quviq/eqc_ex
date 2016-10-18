@@ -63,7 +63,9 @@ defmodule EQC.ExUnit do
     * `timeout:` `t` - Inherited from ExUnit and fails if property takes more than `t` milliseconds.
     * `erlang_counterexample:` `false` - Specify whether QuickCheck should output 
        the Erlang term that it gets as a counterexample when a property fails. Default `true`.
-    * `morebugs:` `b` - Runs more_bugs is `b`
+    * `:morebugs` - Runs more_bugs
+    * `:showstates` - For QuickCheck state machines, show intermediate states for failing tests 
+
 
   ## Example 
   In the example below, QuickCheck runs the first propery for max 1 second and the second
@@ -142,7 +144,7 @@ defmodule EQC.ExUnit do
 
       ## `mix eqc` options overwrite module tags
       env_flags =
-        Enum.reduce([:numtests, :morebugs],
+        Enum.reduce([:numtests, :morebugs, :showstates],
                     [],
           fn(key, acc) ->
             value = Application.get_env(:eqc, key) 
@@ -163,7 +165,18 @@ defmodule EQC.ExUnit do
         case {Map.get(context, :morebugs), Map.get(context, :eqc_callback)} do
           {true, callback} when callback != nil ->
             suite = callback.more_bugs(__MODULE__, transformed_prop)  # This is indeed the module in which macro is expanded!
-            assert {:feature_based, []} == suite
+            ## possibly save suite at ENV determined location
+            case suite do
+              {:feature_based, []} -> true
+              {:feature_based, fset} ->
+                tests =
+                  for {_,ce} <- fset do
+                  Pretty.print(ce)
+                end
+                assert false, Enum.join(tests, "\n\n")
+              otehr ->
+                assert false, "No feature based suite returned" 
+            end
           _ ->
             failures =
             if context.registered.check do
@@ -215,7 +228,7 @@ defmodule EQC.ExUnit do
       do_transform(prop, opts)
     end
   end
-  defp do_transform(prop, [{:show_states, b} | opts]) do
+  defp do_transform(prop, [{:showstates, b} | opts]) do
     if b do
       do_transform(:eqc_statem.show_states(prop), opts)
     else
