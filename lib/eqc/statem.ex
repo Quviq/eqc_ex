@@ -185,7 +185,7 @@ defmodule EQC.StateM do
     {new_commands, _binding} =
       replace_var(commands, [], [])
     quote do
-      unquote(new_commands)
+      [ {:model, __MODULE__} | unquote(new_commands) ]
     end
   end
     
