@@ -164,7 +164,7 @@ defmodule EQC.ExUnit do
                 
         case {Map.get(context, :morebugs), Map.get(context, :eqc_callback)} do
           {true, callback} when callback != nil ->
-            suite = callback.more_bugs(__MODULE__, transformed_prop)  # This is indeed the module in which macro is expanded!
+            suite = :eqc_statem.more_bugs(transformed_prop)
             ## possibly save suite at ENV determined location
             case suite do
               {:feature_based, []} -> true
@@ -174,7 +174,7 @@ defmodule EQC.ExUnit do
                   Pretty.print(ce)
                 end
                 assert false, Enum.join(tests, "\n\n")
-              otehr ->
+              _ ->
                 assert false, "No feature based suite returned" 
             end
           _ ->
