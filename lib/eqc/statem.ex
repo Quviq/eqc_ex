@@ -82,6 +82,7 @@ defmodule EQC.StateM do
   @doc """
   When a test case fails, this pretty prints the failing test case.
   """
+  def pretty_commands(cmds, res, bool)
   def pretty_commands([{:model, m} | cmds], res, bool) do
     :eqc_gen.with_parameter(:elixir, :true,
     :eqc_statem.pretty_commands(m, [{:model, m} | cmds],
@@ -202,7 +203,21 @@ defmodule EQC.StateM do
 
     
 
+  @doc """
+  Translates test cases of a specific format into a list of commands that is compatible with 
+  `EQC.StateM`.
 
+  ## Examples
+
+        @check same_seat: [
+                   eqc_test do
+                      v1 = book("business")
+                      book("economy")
+                      checkin(2, v1)
+                      bookings()
+                   end ]
+
+  """
   defmacro eqc_test([do: cmds]) do
     commands = case cmds do
                  {:__block__, _, block} -> block
