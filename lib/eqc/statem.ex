@@ -24,43 +24,74 @@ defmodule EQC.StateM do
   end
 
   @doc """
-  Same as `:eqc_statem.run_commands/2` but returns a keyword list with
+  Runs a state machine generated command sequence and returns a keyword list with
   `:history`, `:state`, and `:result` instead of a tuple.
   """
-  def run_commands(mod, cmds) do
-    run_commands(mod, cmds, []) end
-
+  def run_commands(cmds) do
+    run_commands(cmds, [])
+  end
+  
   @doc """
-  Same as `:eqc_statem.run_commands/3` but returns a keyword list with
+  Runs a state machine generated command sequence where vairables in this
+  sequence are substituted by a Keyword list defined context.
+  Returns a keyword list with
   `:history`, `:state`, and `:result` instead of a tuple.
   """
+  def run_commands(cmds, env) do
+    {history, state, result} = :eqc_statem.run_commands(cmds, env)
+    [history: history, state: state, result: result]
+  end
+
+  @doc false
+  # deprecated
   def run_commands(mod, cmds, env) do
     {history, state, result} = :eqc_statem.run_commands(mod, cmds, env)
     [history: history, state: state, result: result]
   end
 
-  @doc """
-  Same as `:eqc_statem.run_parallel_commands/2` but returns a keyword list with
-  `:history`, `:state`, and `:result` instead of a tuple. Note that there is no
-  actual final state in this case.
-  """
-  def run_parallel_commands(mod, cmds) do
-    run_parallel_commands(mod, cmds, []) end
 
   @doc """
-  Same as `:eqc_statem.run_parallel_commands/3` but returns a keyword list with
+  Runs a state machine generated parallel command sequenceand returns a keyword list with
   `:history`, `:state`, and `:result` instead of a tuple. Note that there is no
   actual final state in this case.
   """
+  def run_parallel_commands(cmds) do
+    {history, state, result} = :eqc_statem.run_parallel_commands(cmds)
+    [history: history, state: state, result: result]
+  end
+  
+  @doc """
+  Runs a state machine generated parallel command sequence where vairables in this
+  sequence are substituted by a Keyword list defined context.
+  Returns a keyword list with
+  `:history`, `:state`, and `:result` instead of a tuple. Note that there is no
+  actual final state in this case.
+  """
+  def run_parallel_commands(cmds, env) do
+    {history, state, result} = :eqc_statem.run_parallel_commands(cmds, env)
+    [history: history, state: state, result: result]
+  end
+
+  @doc false
+  # deprecated
   def run_parallel_commands(mod, cmds, env) do
     {history, state, result} = :eqc_statem.run_parallel_commands(mod, cmds, env)
     [history: history, state: state, result: result]
   end
 
   @doc """
-  Same as `:eqc_statem.pretty_commands/4` but uses a keyword list with
-  `:history`, `:state`, and `:result` instead of a tuple.
+  When a test case fails, this pretty prints the failing test case.
   """
+  def pretty_commands([{:model, m} | cmds], res, bool) do
+    :eqc_gen.with_parameter(:elixir, :true,
+    :eqc_statem.pretty_commands(m, [{:model, m} | cmds],
+                                {res[:history], res[:state], res[:result]},
+                                bool))
+  end
+
+
+  @doc false
+  # deprecated
   def pretty_commands(mod, cmds, res, bool) do
     :eqc_gen.with_parameter(:elixir, :true,
     :eqc_statem.pretty_commands(mod, cmds,
@@ -68,17 +99,13 @@ defmodule EQC.StateM do
                                 bool))
   end
 
-  @doc """
-  Same as `:eqc_statem.check_commands/3` but uses a keyword list with
-  `:history`, `:state`, and `:result` instead of a tuple.
-  """
+  @doc false
+  # deprecated
   def check_commands(mod, cmds, run_result) do
     check_commands(mod, cmds, run_result, []) end
 
-  @doc """
-  Same as `:eqc_statem.check_commands/4` but uses a keyword list with
-  `:history`, `:state`, and `:result` instead of a tuple.
-  """
+  @doc false
+  # deprecated
   def check_commands(mod, cmds, res, env) do
     :eqc_gen.with_parameter(:elixir, :true,
     :eqc_statem.check_commands(mod, cmds,
