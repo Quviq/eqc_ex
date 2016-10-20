@@ -14,14 +14,16 @@ defmodule Mix.Tasks.Eqc.Install do
 
      * `--mini` - Install QuickCheck Mini. Default is to install full version.
      * `--version` - Provide version number for specific QuickCheck to install
+     * `--force`- Overwrites already installed version of QuickCheck
 
   ## Examples
 
       mix eqc.install --mini
       mix eqc.install --version 1.38.1
+      mix eqc.install --force --version 1.39.1 Downloads/programs/
 
   """
-  @switches [mini: :boolean, version: :string]
+  @switches [mini: :boolean, version: :string, force: :boolean]
 
   @spec run(OptionParser.argv) :: boolean
   def run(argv) do
@@ -33,9 +35,11 @@ defmodule Mix.Tasks.Eqc.Install do
               end
     
     {uri, dst} = if opts[:mini] do
-                   {uri("http://quviq.com/downloads/", uris), "eqcmini#{version}"}
+                   {uri("http://quviq.com/downloads/", uris),
+                    "eqcmini#{version}"}
                  else
-                   {uri("http://quviq-licencer.com/downloads/", uris), "eqcR#{:erlang.system_info(:otp_release)}#{version}"}
+                   {uri("http://quviq-licencer.com/downloads/", uris),
+                    "eqcR#{:erlang.system_info(:otp_release)}#{version}"}
                  end
     src = Path.join(uri,"#{dst}.zip")
 
@@ -67,15 +71,16 @@ defmodule Mix.Tasks.Eqc.Install do
           """
     end
   end
+  
 
   defp uri(default, []), do: default
   defp uri(_, [provided]), do: provided
   defp uri(_, uris) do
-    raise ArgumentError, message: "Error: Use only one valid location #{inspect uris}"
+    Mix.raise "Error: Use only one valid location #{inspect uris}"
   end
 
 
-  defp build_archives(archives) do
+  defp build_archives(archives, opts) do
     for {prefix, a}<-archives do
       Mix.shell.info [:green, "* installing archive ", :reset, a]
       dst = Path.join(Mix.Local.path_for(:archive), a)
@@ -83,17 +88,18 @@ defmodule Mix.Tasks.Eqc.Install do
         :ok ->
           File.cp_r!(Path.join(prefix, a), Path.join(dst, a))
         {:error, :eexist} ->
-          Mix.raise """
+          if opts[:force] != true do
+            Mix.raise """
             Could not overwrite existing directory #{dst}
             Uninstall older version of QuickCheck first 
             """
+          else
+            Mix.shell.info [:yellow, "* deleting previously installed version ", :reset]
+          end
         {:error, posix} ->
-          Mix.raise """
-            Could not create directory #{dst}
-            Error: #{posix}
-            """
+          Mix.raise "Could not create directory #{dst} Error: #{posix}"
+          end
       end
-    end
   end
 
   defp unpack(binary, dst, opts) do
@@ -114,7 +120,7 @@ defmodule Mix.Tasks.Eqc.Install do
                      {eqc_version["prefix"], "pulse-#{eqc_version["version"]}"},
                      {eqc_version["prefix"], "pulse_otp-#{eqc_version["version"]}"} ]
                  end
-      build_archives(archives)
+      build_archives(archives, opts)
       
       Mix.shell.info( [:green, "* deleted downloaded ", :reset, dir_dst ])
       File.rm_rf!(dir_dst)
@@ -122,9 +128,7 @@ defmodule Mix.Tasks.Eqc.Install do
       # touch eqc_ex part that depends on QuickCheck version to force recompilation
       File.touch(List.to_string((Elixir.EQC.Mocking.module_info())[:compile][:source]))
     else
-      Mix.raise """
-            Error! Failed to find eqc in downloaded zip
-            """
+      Mix.raise "Error! Failed to find eqc in downloaded zip"
     end
   end
 
