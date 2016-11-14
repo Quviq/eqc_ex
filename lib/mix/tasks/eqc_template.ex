@@ -9,7 +9,8 @@ defmodule Mix.Tasks.Eqc.Template do
   ## Options
 
      * `--model model` - creates a QuickCheck model (default eqc_statem).
-     * `--dir directory` - puts the created file into directory (default first path in :test_paths project parameter). 
+     * `--dir directory` - puts the created file into directory (default first path in :test_paths project parameter).
+     * `--api api_description` - uses @spec notiation type declarations to create a template. 
 
   ## Examples
 
