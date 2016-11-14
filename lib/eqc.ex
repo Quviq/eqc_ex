@@ -569,7 +569,7 @@ defmodule EQC do
   """
   def conjunction(kvlist) do
     try do :eqc.conjunction(kvlist)
-    rescue e in UndefinedFunctionError ->
+    rescue _ in UndefinedFunctionError ->
         raise UndefinedFunctionError, reason: "Your QuickCheck does not support conjunction"
     end
   end
