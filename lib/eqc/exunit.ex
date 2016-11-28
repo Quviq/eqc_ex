@@ -9,7 +9,12 @@ defmodule EQC.ExUnit do
     def print([term|tail]), do: pp(term) <> "\n   " <> print(tail)
 
     def pp(term) do
-      IO.iodata_to_binary(:prettypr.format(:eqc_symbolic.pretty_elixir_symbolic_doc(term), 80))
+      if :eqc.version() == 2.01 do
+        ## QuickCheck Mini has less advanced printing
+        Macro.to_string(term)
+      else
+        IO.iodata_to_binary(:prettypr.format(:eqc_symbolic.pretty_elixir_symbolic_doc(term), 80))
+      end
     end
     
   end
