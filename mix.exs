@@ -1,7 +1,7 @@
 defmodule EQC.Mixfile do
   use Mix.Project
 
-  @version "1.4.1"
+  @version "1.4.2"
 
   def project do
     [ app: :eqc_ex,
@@ -42,6 +42,6 @@ defmodule EQC.Mixfile do
   end
 
   defp deps do
-    [{:ex_doc, "~> 0.11", only: :dev}]
+    [{:ex_doc, "~> 0.14", only: :dev}]
   end
 end
