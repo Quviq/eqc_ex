@@ -47,7 +47,7 @@ defmodule Mix.Tasks.Eqc.Install do
     # Need to fix this in Elixir.
     
     Mix.shell.info [:green, "* fetching ", :reset, src]
-    case Mix.Utils.read_path(src, []) do
+    case Mix.Utils.read_path(src, unsafe_uri: true) do
       {:ok, binary} ->
         unpack(binary, dst, opts)                                      
                                         
